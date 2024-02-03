@@ -67,7 +67,7 @@ export default function Login() {
             <form action="#" method="POST" onSubmit={ handleSubmit }>
                 <div className="mb-3">
                     <label htmlFor="exampleInputEmail1" className="form-label text-white">EMAIL ADDRESS</label>
-                    <input type="email" name="email" className="form-control bg-dark text-white border border-secondary" value={ loginData.email }  onChange={ handleChange } id="exampleInputEmail1" required="required" aria-describedby="emailHelp" />
+                    <input type="email" name="email" className="form-control bg-dark text-white text-lowercase border border-secondary" value={ loginData.email }  onChange={ handleChange } id="exampleInputEmail1" required="required" aria-describedby="emailHelp" />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="exampleInputPassword1" className="form-label text-white">PASSWORD</label>

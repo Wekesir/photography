@@ -4,6 +4,7 @@ import { Route, createBrowserRouter, createRoutesFromElements, Outlet, RouterPro
 
 import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
+import SignUpPage from './pages/SignupPage'
 import UserContext from './contexts/UserContext'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <Route path='/' element={ <Root/> }>
           <Route index element={ <HomePage /> }></Route>
           <Route path="/login" element={ <LoginPage /> }></Route> 
+          <Route path='/signup' element={ <SignUpPage /> }></Route>
       </Route> 
     )
   );
