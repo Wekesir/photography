@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import UserContext from '../contexts/UserContext';
 
 export default function Login() {
@@ -62,7 +62,7 @@ export default function Login() {
 
   return (
     <div className="container-fluid">
-        <div className='px-3 py-5 col-md-4 col-12 mx-auto' style={{ backgroundColor : 'rgba(0,0,0,0.4)' }}>
+        <div className='px-3 py-5 col-md-4 col-12 mx-auto' style={{ backgroundColor : 'rgba(0,0,0,0.3)' }}>
             <h4 className="text-white text-center"> <i className="bi bi-box-arrow-in-right"></i> SIGN IN</h4> <hr className="border border-secondary" />
             <form action="#" method="POST" onSubmit={ handleSubmit }>
                 <div className="mb-3">
@@ -76,11 +76,15 @@ export default function Login() {
                 <div className="mb-3 form-check">
                     <input type="checkbox" onChange={ handlePasswordToggle } className="form-check-input" id="exampleCheck1" />
                     <label className="form-check-label text-white" htmlFor="exampleCheck1">Show password.</label>
+                    <small className="float-end" title="Click to reset your password."><Link to='/resetpassword' className='link-info'>Reset password.</Link></small>
                 </div>
                 <div className="d-grid gap-2">
                     <button type="submit" className="btn btn-primary" id="loginButton" title="Click to sign in.">  <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> Sign In</button>
                 </div>
             </form>
+            <div className="bg-dark mt-2">
+                <small className='text-white'>Don't have an account? <Link to='/signup' className='link-info link-underline-opacity-75-hover'>Sign up.</Link></small>
+            </div>
         </div>
     </div>
   )
