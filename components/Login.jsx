@@ -6,6 +6,7 @@ import UserContext from '../contexts/UserContext';
 export default function Login() {
 
     const navigate = useNavigate();
+    const { setLoggedInUserData } = useContext(UserContext);
 
     let loginButton = document.querySelector("#loginButton"); 
     let passwordInputField = document.getElementById("passwordInput");
@@ -39,22 +40,20 @@ export default function Login() {
             .then((response)=>{
                 console.log(response);
                 
-                if (response.data === "Logged in successfully!"){
+                if (response.data.?status && response.data.status === 1){
                     localStorage.setItem('token', response.config.headers['x-auth-token']);
-                    alert("You are now logged in!");
 
-                    const { setLoggedInUserData } = useContext(UserContext);
+                    setLoggedInUserData(response.data.loggedInUserData);
 
-                    navigate('/pages/dashboard')
+                    navigate("/pages/dashboard");
                 } else {
-                    alert("Invalid credentials");
+                    console.error(response.data.Msg);
                 }
             }).catch((error) => {
                     console.log(error);
                     //Reset the form Data
-                    setLoginData({email:"",password:""});  
-                }              
-            );
+                    setLoginData({email:"", password:""});       
+            });
 
             //Enable the submit button and hide the spinner 
             loginButton.disabled = false;
@@ -62,16 +61,17 @@ export default function Login() {
     }
 
   return (
-    <>
-        <form onSubmit={ handleSubmit } className='p-3 col-12 col-md-4 mx-auto'>
+    <div className='p-3 col-12 col-md-4 mx-auto'>
+        <h4 className="text-white text-center"> <i class="bi bi-box-arrow-in-right"></i> LOGIN</h4> <hr className="border border-secondary" />
+        <form onSubmit={ handleSubmit } >
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label text-white">EMAIL ADDRESS</label>
-                <input type="email" name="email" class="form-control bg-black text-white border border-secondary" value={ loginData.email }  onChange={ handleChange } id="exampleInputEmail1" aria-describedby="emailHelp" />
+                <input type="email" name="email" class="form-control bg-black text-white border border-secondary" value={ loginData.email }  onChange={ handleChange } id="exampleInputEmail1" required="required" aria-describedby="emailHelp" />
                 <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label text-white">PASSWORD</label>
-                <input type="password" name='password' class="form-control bg-black text-white border border-secondary" value={ loginData.password } onChange={ handleChange } id="passwordInput" />
+                <input type="password" name='password' class="form-control bg-black text-white border border-secondary" required="required" value={ loginData.password } onChange={ handleChange } id="passwordInput" />
             </div>
             <div class="mb-3 form-check">
                 <input type="checkbox border border-white" onChange={ handlePasswordToggle } class="form-check-input" id="exampleCheck1" />
@@ -79,6 +79,6 @@ export default function Login() {
             </div>
             <button type="submit" class="btn btn-primary" id="loginButton">  <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> Submit</button>
         </form>
-    </>
+    </div>
   )
 }
