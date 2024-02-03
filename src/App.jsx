@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
-import Login from '../pages/Login'
+import LoginPage from '../pages/LoginPage'
 
 function App() {
   const [loggedInUserData, setLoggedInUserData] = useState(null);
@@ -12,7 +10,7 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={ <Root/> }>
-          <Route path="/login" element={ <Login /> }></Route>
+          <Route path="/login" element={ <LoginPage /> }></Route>
       </Route>
     )
   );

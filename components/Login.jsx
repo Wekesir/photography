@@ -40,7 +40,7 @@ export default function Login() {
             .then((response)=>{
                 console.log(response);
                 
-                if (response.data.?status && response.data.status === 1){
+                if (response.data?.status && response.data.status === 1){
                     localStorage.setItem('token', response.config.headers['x-auth-token']);
 
                     setLoggedInUserData(response.data.loggedInUserData);
