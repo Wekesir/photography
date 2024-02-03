@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
-import './App.css'
+import { Route, createBrowserRouter, createRoutesFromElements, Outlet, RouterProvider } from "react-router-dom"
 
-import LoginPage from '../pages/LoginPage'
+
+import LoginPage from './pages/LoginPage'
+import HomePage from './pages/HomePage'
+import UserContext from './contexts/UserContext'
 
 function App() {
   const [loggedInUserData, setLoggedInUserData] = useState(null);
@@ -10,8 +12,9 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={ <Root/> }>
-          <Route path="/login" element={ <LoginPage /> }></Route>
-      </Route>
+          <Route index element={ <HomePage /> }></Route>
+          <Route path="/login" element={ <LoginPage /> }></Route> 
+      </Route> 
     )
   );
 
