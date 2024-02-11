@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import axios from  'axios'
+
+import { ToastContainer, toast } from 'react-toastify'
+import '../../node_modules/react-toastify/dist/ReactToastify.css'
 
 export default function SignUp() {
 
@@ -10,27 +14,32 @@ export default function SignUp() {
         password2 : ""
     })
 
-    const navigate = useNavigate();
+    const navigate = useNavigate(); 
 
     function handleChange(e){
         const {name, value} = e.target;
         setSignUpData((prevData)=>({...prevData, [name]:value}))
     }
 
-    function handleSubmit(e){
-        e.preventDefault();
+    function notify(message){
+        toast(message);
+    }
 
-        axios.post("https://localhost:80/photographyapi/auth/signup.php", signUpData)
+    function handleSubmit(e){
+        e.preventDefault(); 
+
+        axios.post("http://localhost:80/photography_api/auth/signup.php", signUpData)
             .then((response)=>{
                 console.log(response);
                 
                 if (response.data?.status && response.data.status === 1){
-                    navigate("/login");
+                    notify(response.data.Msg);
+                    setTimeout(()=>{navigate("/login")}, 2000);
                 } else {
-                    console.error(response.data.Msg);
+                    notify(response.data.Msg);
                 }
             }).catch((error) => {
-                    console.log(error);     
+                notify(error);   //If axios failed to make the post request  
             });
     }
 
@@ -63,6 +72,20 @@ export default function SignUp() {
                 <small className='text-white'>Already have an account? <Link to='/login' className='link-info link-underline-opacity-75-hover'>Sign in.</Link></small>
             </div>
         </div>
+
+        <ToastContainer
+            position="bottom-left"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+            transition: Bounce
+        />
     </div>
   )
 }
