@@ -20,6 +20,10 @@ export default function ResetPassword() {
     //When both the email and the code have been submitted
     function handleSubmit(event){
         event.preventDefault();
+
+        submitButton.setAttribute("disabled", true)
+        submitButton.querySelector("span").classList.remove("d-none")
+
         axios.post("http://localhost:80/photography_api/passwordReset/sendNewPassword.php", resetFormData)
             .then(response => {
                 console.log(response.data)            
@@ -35,6 +39,9 @@ export default function ResetPassword() {
             .catch(error =>{
                 notify(error)
             })
+        
+        submitButton.removeAttribute("disabled")
+        submitButton.querySelector("span").classList.add("d-none")
         
     }
 
