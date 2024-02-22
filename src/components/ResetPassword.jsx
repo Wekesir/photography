@@ -30,7 +30,7 @@ export default function ResetPassword() {
                
                 if(response.data?.status && response.data.status == 1){
                     setTimeout(() => { //Create a delay for the notification display 
-                        navigate("login");
+                        navigate("/login");
                     }, 2000);                   
                 } 
                 //Display success message
@@ -75,8 +75,7 @@ export default function ResetPassword() {
         setResetFormData((prevData) => ({...prevData, [name]:value}))
     }
 
-    function notify(message)
-    {
+    function notify(message){
         toast(message)
     }
 
@@ -94,7 +93,10 @@ export default function ResetPassword() {
                     <input type="number" name='resetCode' className="form-control bg-dark text-white border border-secondary" value={ resetFormData.resetCode } onChange={ handleChange } id="resetCodeInput" required={ resetFormData.resetCode !== "" } />
                 </div>                
                 <div className="d-grid gap-2">
-                    <button type={ resetFormData.resetCode !== "" ? "submit" : "button" } onClick={ (e)=>(resetFormData.resetCode === "" ? sendEmailForReset() : handleSubmit(e)) } className="btn btn-primary" id="resetCodeSubmitButton" title="Click to send password reset code.">  <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> Send Code</button>
+                    <button type={ resetFormData.resetCode !== "" ? "submit" : "button" } onClick={ (e)=>(resetFormData.resetCode === "" ? sendEmailForReset() : handleSubmit(e)) } className="btn btn-primary" id="resetCodeSubmitButton" title="Click to send password reset code.">  
+                        <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> 
+                        Send Code
+                    </button>
                 </div>
             </form>
             <div className="bg-dark mt-2">

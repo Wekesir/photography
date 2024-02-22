@@ -2,10 +2,16 @@ import React, { useContext, useState } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom';
 import UserContext from '../contexts/UserContext';
+import Cookies from 'js-cookie'
+import { jwtDecode } from 'jwt-decode'
+
+import { ToastContainer, toast } from 'react-toastify'
+import '../../node_modules/react-toastify/dist/ReactToastify.css'
 
 export default function Login() {
 
     const navigate = useNavigate();
+
     const { setLoggedInUserData } = useContext(UserContext);
 
     let loginButton = document.querySelector("#loginButton"); 
@@ -41,16 +47,27 @@ export default function Login() {
                 console.log(response);
                 
                 if (response.data?.status && response.data.status === 1){
-                    localStorage.setItem('token', response.config.headers['x-auth-token']);
 
-                    setLoggedInUserData(response.data.loggedInUserData);
+                    //Check if the jwt has been created
+                    const jwtToken = Cookies.get('jwtToken');
 
-                    navigate("/pages/dashboard");
+                    if(jwtToken){
+                        const decodedToken = jwtDecode(jwtToken);
+                        console.log(decodedToken); // Logs the payload of the JWT token
+
+                        setLoggedInUserData(decodedToken.data); //Sets the logged In user payload to the user context
+                        navigate("/pages/dashboard");
+                    } else {
+                        notify('There was a problem creating an access token. Please try again')
+                    }
+
+
                 } else {
-                    console.error(response.data.Msg);
+                    notify(response.data.Msg);
                 }
             }).catch((error) => {
-                    console.log(error);
+                    notify(error);
+
                     //Reset the form Data
                     setLoginData({email:"", password:""});       
             });
@@ -60,9 +77,13 @@ export default function Login() {
             loginButton.querySelector("span").classList.add("d-none");
     }
 
+    function notify(message){
+        toast(message)
+    }
+
   return (
     <div className="container-fluid">
-        <div className='px-3 py-5 col-md-4 col-12 mx-auto' style={{ backgroundColor : 'rgba(0,0,0,0.3)' }}>
+        <div className='px-3 py-5 col-md-4 col-12 mx-auto border-start border-warning' style={{ backgroundColor : 'rgba(0,0,0,0.3)' }}>
             <h4 className="text-white text-center"> <i className="bi bi-box-arrow-in-right"></i> SIGN IN</h4> <hr className="border border-secondary" />
             <form action="#" method="POST" onSubmit={ handleSubmit }>
                 <div className="mb-3">
@@ -86,6 +107,20 @@ export default function Login() {
                 <small className='text-white'>Don't have an account? <Link to='/signup' className='link-info link-underline-opacity-75-hover'>Sign up.</Link></small>
             </div>
         </div>
+
+        <ToastContainer
+            position="bottom-left"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+            transition: Bounce
+        />
     </div>
   )
 }
