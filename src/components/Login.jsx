@@ -1,9 +1,7 @@
 import React, { useContext, useState } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom';
-import UserContext from '../contexts/UserContext';
-import Cookies from 'js-cookie'
-import { jwtDecode } from 'jwt-decode'
+import UserContext from '../contexts/UserContext'
 
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
@@ -14,7 +12,7 @@ export default function Login() {
 
     const { setLoggedInUserData } = useContext(UserContext);
 
-    let loginButton = document.querySelector("#loginButton"); 
+    let loginButton = document.getElementById("loginButton"); 
     let passwordInputField = document.getElementById("passwordInput");
 
     const [loginData, setLoginData] = useState({
@@ -42,28 +40,15 @@ export default function Login() {
         loginButton.querySelector("span").classList.remove("d-none");
 
         //Axios post request
-        axios.post("https://localhost:80/photographyapi/auth/login.php", loginData)
+        axios.post("http://localhost:80/photography_api/auth/login.php", loginData)
             .then((response)=>{
-                console.log(response);
+                console.log(response.data); //Data from the console
                 
                 if (response.data?.status && response.data.status === 1){
-
-                    //Check if the jwt has been created
-                    const jwtToken = Cookies.get('jwtToken');
-
-                    if(jwtToken){
-                        const decodedToken = jwtDecode(jwtToken);
-                        console.log(decodedToken); // Logs the payload of the JWT token
-
-                        setLoggedInUserData(decodedToken.data); //Sets the logged In user payload to the user context
-                        navigate("/pages/dashboard");
-                    } else {
-                        notify('There was a problem creating an access token. Please try again')
-                    }
-
-
+                    setLoggedInUserData(response.data.data); //Sets the logged In user payload to the user context
+                    navigate("/home");
                 } else {
-                    notify(response.data.Msg);
+                    notify(response.data.msg);
                 }
             }).catch((error) => {
                     notify(error);

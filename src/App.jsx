@@ -6,6 +6,9 @@ import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import SignUpPage from './pages/SignupPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
+import Index from './pages/index'
+import AddClients from './pages/AddClientsPage'
+import ClientsList from './pages/ClientsPage'
 import UserContext from './contexts/UserContext'
 
 function App() {
@@ -14,11 +17,14 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={ <Root/> }>
-          <Route index element={ <HomePage /> }></Route>
+          <Route index element={ <Index /> }></Route>
           <Route path="/login" element={ <LoginPage /> }></Route> 
           <Route path='/signup' element={ <SignUpPage /> }></Route>
           <Route path='/resetpassword' element={ <ResetPasswordPage/> }></Route>
-      </Route> 
+          <Route path='/home' element={ <HomePage/> }></Route>
+          <Route path="/newClient" element={ <AddClients /> }></Route>
+          <Route path="/clients" element={ <ClientsList /> }></Route>
+      </Route>  
     )
   );
 
