@@ -5,6 +5,7 @@ import Sidenav from '../components/Sidenav'
 
 export default function ClientsPage() {
 
+  document.title = "Clients | Lyrics Photography"
 
   return (
     <div className='bg-dark container-fluid ps-0' style={{height: '100vh'}}>
@@ -14,7 +15,7 @@ export default function ClientsPage() {
                 <Sidenav />
             </div>
             <div className="col-md-9 overflow-y-auto">
-                <h5 className="text-white"><i class="bi bi-people-fill"></i> &nbsp; Clients List</h5>
+                <h5 className="text-white"><i className="bi bi-people-fill"></i> &nbsp; Clients List</h5>
                 <Clients />
             </div>
         </div>

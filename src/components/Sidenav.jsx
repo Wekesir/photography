@@ -12,8 +12,6 @@ export default function Sidenav() {
 
   const isDropdownActive = (index) => activeDropdown === index
 
-
-
   return (
     <div className='conteiner-fluid overflow-y-auto' style={{backgroundColor: 'rgba(0,0,0,.5)', height: '84vh'}}>
       <div className="d-grid gap-2">
