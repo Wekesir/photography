@@ -30,7 +30,6 @@ export default function SignUp() {
 
         axios.post("http://localhost:80/photography_api/auth/signup.php", signUpData)
             .then((response)=>{
-                console.log(response);
                 
                 if (response.data?.status && response.data.status === 1){
                     notify(response.data.Msg);
