@@ -11,9 +11,11 @@ export default function Sidenav() {
   const [activeDropdown, setActiveDropdown] = useState(null); //Sets the active dropdoown 
   const [selectedFiles, setSelectedFiles ] = useState([]); //Holds the image files selected for upload
   const [uploadFolder, setUploadFolder] = useState("") //Holds the folder to which we'll upload the files
+  const [existingFolders, setExistingFolder] = useState([]) //Holds the folders already in the db
 
   const fileinput = document.getElementById("selectFileInput")
   const foldersToggleDiv = document.getElementById('foldersDropdown')
+  const uploadingSpinner = document.querySelector("#uploadingSpinner") 
  
   const toggleDropdown = (index) => {
     setActiveDropdown((prevIndex) => (prevIndex === index ? null : index));
@@ -93,6 +95,7 @@ export default function Sidenav() {
      * Selected folder is not empty
      */
     event.target.setAttribute("disabled", true)
+    uploadingSpinner.classList.toggle("d-none") //Display the spinner
 
     if(!selectedFiles.length || !uploadFolder){
       notify("A fodler and at least one file MUST be provided to proceed")
@@ -113,15 +116,35 @@ export default function Sidenav() {
           'Content-Type': 'multipart/form-data'
         }
       })
-      .then((res)=>{
-        console.log(res.data)
-        }).catch((error) => {
-          notify(error) 
-        })
+      .then((res)=>{        
+        
+        notify(res.data.msg)
+  
+      }).catch((error) => {
+        notify(error) 
+      })
     }
 
     event.target.removeAttribute("disabled")
+    uploadingSpinner.classList.toggle("d-none") //Hide the spinner 
   }
+
+  //Fetch the folders that are already in the database 
+  useEffect(()=>{
+    axios.get("http://localhost:80/photography_api/projects/fetch-projects.php")
+      .then(response=>{ 
+
+        if(response.data?.status && response.data.status == 0){
+          notify(response.data.msg)
+        } else { 
+          setExistingFolder(response.data.folders)
+        }
+
+      })
+      .catch(error=>{
+        notify("Error: " + error)
+      }) 
+  }, [])
 
   //Clear selected lists when the modal has been clicked
   useEffect(()=>{
@@ -186,10 +209,12 @@ export default function Sidenav() {
             <div className="mb-4 mt-2 d-none" id="foldersDropdown">    
                 <label className="text-info mb-2">Select from folder list</label>        
                 <select className="form-select me-2 bg-dark text-white border border-secondary" onChange={ handleSelectToggleFolder } aria-label="Default select example">
-                  <option ></option>
-                  <option value="1">One</option>
-                  <option value="2">Two</option> 
-                  <option value="3">Three</option> 
+                  <option value=""></option>
+                  {existingFolders.map((folder, index) => {
+                    return (
+                      <option value={ folder.project_name } key={ index }> { folder.project_name } </option>
+                    )
+                  })}
                 </select>
             </div>
 
@@ -215,7 +240,7 @@ export default function Sidenav() {
             </table>
             </div>
             <div className="modal-footer border-top border-secondary">
-              <button className="btn btn-default text-white me-auto" type="button">
+              <button className="btn btn-default text-white me-aut d-none" type="button" id="uploadingSpinner">
                 <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> &nbsp;
                 <span className="" role="status">Uploading Files...</span>
               </button>
