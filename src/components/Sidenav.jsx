@@ -8,8 +8,8 @@ import '../../node_modules/react-toastify/dist/ReactToastify.css'
 
 
 export default function Sidenav() {
-  const [activeDropdown, setActiveDropdown] = useState(null); //Sets the active dropdoown 
-  const [selectedFiles, setSelectedFiles ] = useState([]); //Holds the image files selected for upload
+  const [activeDropdown, setActiveDropdown] = useState(null) //Sets the active dropdoown 
+  const [selectedFiles, setSelectedFiles ] = useState([]) //Holds the image files selected for upload
   const [uploadFolder, setUploadFolder] = useState("") //Holds the folder to which we'll upload the files
   const [existingFolders, setExistingFolder] = useState([]) //Holds the folders already in the db
 
@@ -171,7 +171,7 @@ export default function Sidenav() {
           <input type="file" className="d-none" id="selectFileInput" onChange={ handleSelectedFiles } accept='image/*, video/*' multiple/>
       </div>
       <ul className="my-4 ps-1">
-        <li className={`mainmenu ${isDropdownActive(0) ? 'active' : ''}`} onClick={ ()=>toggleDropdown(0) }><i className="bi bi-folder-fill"></i> &nbsp; Projects</li>
+        <li className={`mainmenu ${isDropdownActive(0) ? 'active' : ''}`} onClick={ ()=>toggleDropdown(0) }><i className="bi bi-folder-fill"></i> &nbsp;  <Link to="/projects" className="text-decoration-none text-white">Projects</Link> </li>
         <li className={`mainmenu ${isDropdownActive(1) ? 'active' : ''}`} onClick={ ()=>toggleDropdown(1) }><i className="bi bi-journals"></i> &nbsp; Bookings <i className="bi bi-caret-down-fill float-end"></i>
           <ul className={`mainmenu-dropdown ${isDropdownActive(1) ? '' : 'd-none'}`}>
             <li> <Link to="/newbooking" className='text-decoration-none  text-white'> <i className="bi bi-journal-plus"></i> New Booking </Link> </li>

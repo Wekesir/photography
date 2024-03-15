@@ -10,6 +10,8 @@ import Index from './pages/index'
 import AddClients from './pages/AddClientsPage'
 import ClientsList from './pages/ClientsPage'
 import UserContext from './contexts/UserContext'
+import ProjectsPage from './pages/ProjectsPage'
+import ProjectDetailsPage from './pages/ProjectDetailsPage'
 
 function App() {
   const [loggedInUserData, setLoggedInUserData] = useState(null);
@@ -24,6 +26,8 @@ function App() {
           <Route path='/home' element={ <HomePage/> }></Route>
           <Route path="/newClient" element={ <AddClients /> }></Route>
           <Route path="/clients" element={ <ClientsList /> }></Route>
+          <Route path="/projects" element={ <ProjectsPage /> }></Route>
+          <Route path="/proj/:id/:folder" element={ <ProjectDetailsPage /> }></Route>
       </Route>  
     )
   );
