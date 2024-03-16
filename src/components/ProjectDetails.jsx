@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { BACKEND_SERVER } from '../constants/constants'
-import { getRealFileName } from '../utils/helpers'
+import { getRealFileName, handleDownloadFile } from '../utils/helpers'
 
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
@@ -10,23 +10,31 @@ import '../../node_modules/react-toastify/dist/ReactToastify.css'
 export default function ProjectDetails() {
 
     const { id, folder } = useParams()
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true)
     const [files, setFiles] = useState([])
 
-    useEffect(()=>{
-        axios.post(BACKEND_SERVER + "/files/get-folder-files.php", { FOLDER_ID : id })
-            .then(response => {
-                if(response.data.status == 1){ console.log(response.data.files)
-                    setFiles(response.data.files)
-                    setIsLoading(false)
-                } else {
-                    notify(response.data.msg)
-                }
-            })
-            .catch(error=>{ console.log(error)
-                notify("Error: " + error)
-            })
-    }, [])
+
+    //Check to make sure the parameters have been provided
+    if((id && id > 0) && folder){
+        useEffect(()=>{
+            axios.post(BACKEND_SERVER + "/files/get-folder-files.php", { FOLDER_ID : id })
+                .then(response => {
+                    if(response.data.status == 1){ console.log(response.data.files)
+                        setFiles(response.data.files)
+                        setIsLoading(false)
+                    } else {
+                        notify(response.data.msg)
+                    }
+                })
+                .catch(error=>{ console.log(error)
+                    notify("Error: " + error)
+                })
+        }, [])
+    } else {
+        navigate("/projects")
+    }
+      
 
     function notify(message){
         toast(message)
@@ -64,8 +72,8 @@ export default function ProjectDetails() {
                                                     <i className="bi bi-three-dots-vertical"></i>
                                                 </button>
                                                 <ul className="dropdown-menu dropdown-menu-dark">
-                                                    <li><Link className="dropdown-item" to="#"><i class="bi bi-download"></i> &nbsp; Download</Link></li>
-                                                    <li><Link className="dropdown-item" to="#"><i class="bi bi-trash3"></i> &nbsp; Delete</Link></li>
+                                                    <li onClick={ ()=>{handleDownloadFile(file)} }><Link className="dropdown-item" to="#"><i className="bi bi-download"></i> &nbsp; Download</Link></li>
+                                                    <li><Link className="dropdown-item" to="#"><i className="bi bi-trash3"></i> &nbsp; Delete</Link></li>
                                                 </ul>
                                             </div>
                                         </div>
