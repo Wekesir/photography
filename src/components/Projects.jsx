@@ -4,23 +4,26 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
+import { BACKEND_SERVER } from '../constants/constants'
+import { handleDownloadFolder } from '../utils/helpers'
 
 export default function Projects() {
 
     const [folders, setFolders] = useState([])
     const [selectedRenameFolder, setSelectedRenameFolder] = useState([]) //Holds the folder we want to rename 
+    const [isLoading, setIsLoading] = useState(true)
 
     const navigate = useNavigate();
 
-
     //Fetch all the folders in the database 
     useEffect(()=>{
-        axios.get("http://localhost:80/photography_api/projects/fetch-projects.php")
+        axios.get(BACKEND_SERVER + "/projects/fetch-projects.php")
           .then(response=>{ 
     
             if(response.data?.status && response.data.status == 0){
               notify(response.data.msg)
             } else { 
+                setIsLoading(false)
                 setFolders( response.data.folders )  
             }
     
@@ -43,24 +46,24 @@ export default function Projects() {
             const spinner = event.target.querySelector("span")
             spinner.classList.toggle("d-none")
 
-            axios.post('http://localhost:80/photography_api/projects/delete-project.php', {PROJECT_ID : deleteId})
-            .then(response => { 
-                notify(response.data.msg)
-                spinner.classList.toggle("d-none")
+            axios.post(BACKEND_SERVER + '/projects/delete-project.php', {PROJECT_ID : deleteId})
+                .then(response => { 
+                    notify(response.data.msg)
+                    spinner.classList.toggle("d-none")
 
-                //if it was a success
-                if(response.data?.status && response.data.status == 1){
-                    //Hide the project just to prevent reloading the component 
-                    const folderContainer = event.target.closest('div.folderContainer')
+                    //if it was a success
+                    if(response.data?.status && response.data.status == 1){
+                        //Hide the project just to prevent reloading the component 
+                        const folderContainer = event.target.closest('div.folderContainer')
 
-                    if (folderContainer){
-                        folderContainer.classList.add("d-none")
+                        if (folderContainer){
+                            folderContainer.classList.add("d-none")
+                        }
                     }
-                }
-            })
-            .catch(error =>  { console.log(error)
-                notify('Error: ' + error)
-            })
+                })
+                .catch(error =>  { console.log(error)
+                    notify('Error: ' + error)
+                })
         }
     }
 
@@ -111,32 +114,41 @@ export default function Projects() {
   return (
     <>
         <div className="container-fluid py-2">
-            <div className="row">
-                {folders.map((folder, index) => {
-                    return(
-                        <div className="col-md-4 border border-secondary p-2 folderContainer" key={ index }>
-                            <div className="row text-white">
-                                <div className="col-md-2 text-center"> <i className="bi bi-folder-fill"></i> </div>
-                                <div className="col-md-7 text-truncate"> {folder.project_name} </div>
-                                <div className="col-md-3 text-center">
-                                    <div className="dropdown">
-                                        <button className="btn btn-sm btn-default text-white btn-outline-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i className="bi bi-three-dots-vertical fw-bold"></i>
-                                        </button>
-                                        <ul className="dropdown-menu dropdown-menu-dark">
-                                            <li onClick={ (event)=>{ handleOpen(event, folder) } }><Link className="dropdown-item" to="#"><i className="bi bi-folder2-open"></i> &nbsp; Open</Link></li>
-                                            <li><Link className="dropdown-item" to="#"><i className="bi bi-download"></i> &nbsp; Download</Link></li>
-                                            <li onClick={ (event)=>{handleEdit(event, folder)}}><Link className="dropdown-item" to="#"><i className="bi bi-pencil"></i> &nbsp; Rename</Link></li>
-                                            <li><Link className="dropdown-item" to="#"><i className="bi bi-share"></i> &nbsp; Share</Link></li>
-                                            <li onClick= { (event)=>{handleDelete(event, folder.project_id)}}><Link className="dropdown-item" to="#"><i className="bi bi-trash"></i> &nbsp; Delete &nbsp; <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"> </span> </Link></li>
-                                        </ul>
+            { isLoading ? (
+                <div className="text-center align-middle">
+                    <div className="spinner-border text-secondary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                    <span role="status" className="ms-3 fw-bold text-secondary">Loading projects...</span>
+                </div>
+            ) : (
+                <div className="row">
+                    {folders.map((folder, index) => {
+                        return(
+                            <div className="col-md-4 border border-secondary p-2 folderContainer" key={ index }>
+                                <div className="row text-white">
+                                    <div className="col-md-2 text-center"> <i className="bi bi-folder-fill"></i> </div>
+                                    <div className="col-md-7 text-truncate"> {folder.project_name} </div>
+                                    <div className="col-md-3 text-center">
+                                        <div className="dropdown">
+                                            <button className="btn btn-sm btn-default text-white btn-outline-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i className="bi bi-three-dots-vertical fw-bold"></i>
+                                            </button>
+                                            <ul className="dropdown-menu dropdown-menu-dark">
+                                                <li onClick={ (event)=>{ handleOpen(event, folder) } }><Link className="dropdown-item" to="#"><i className="bi bi-folder2-open"></i> &nbsp; Open</Link></li>
+                                                <li onClick={ ()=>{handleDownloadFolder(folder)} }><Link className="dropdown-item" to="#"><i className="bi bi-download"></i> &nbsp; Download</Link></li>
+                                                <li onClick={ (event)=>{handleEdit(event, folder)}}><Link className="dropdown-item" to="#"><i className="bi bi-pencil"></i> &nbsp; Rename</Link></li>
+                                                <li><Link className="dropdown-item" to="#"><i className="bi bi-share"></i> &nbsp; Share</Link></li>
+                                                <li onClick= { (event)=>{handleDelete(event, folder.project_id)}}><Link className="dropdown-item" to="#"><i className="bi bi-trash"></i> &nbsp; Delete &nbsp; <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"> </span> </Link></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    )
-                })}
-            </div>
+                        )
+                    })}
+                </div>
+            )}
         </div>
 
         <div className="modal fade" id="editProjectNameModal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">

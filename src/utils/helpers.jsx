@@ -31,9 +31,30 @@ export function handleDownloadFile(fileInfo) {
             link.setAttribute('download', filename); // Change the filename as needed
             document.body.appendChild(link);
             link.click();
-            document.body.removeChild(link);
+            document.body.removeChild(link); 
       })
       .catch((error) => {
         console.error('Error downloading file:', error)
       });
+}
+
+export function handleDownloadFolder(folderDetails) {
+  axios.post(BACKEND_SERVER + "/projects/download-project.php", folderDetails, {responseType : 'blob'})
+      .then(response => {
+           // Create a blob URL for the zip file
+          const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
+
+          const link = document.createElement('a')
+          link.href = blobUrl
+          link.download = folderDetails.project_name + '.zip';
+          document.body.appendChild(link);
+          link.click();
+    
+          // Clean up the link and revoke the blob URL
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(blobUrl);
+      })
+      .catch(error => {
+          notify("Error downloading project : " + error)
+      })
 }
