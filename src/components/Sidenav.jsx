@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import '../assets/css/sidenav.css'
 import axios from 'axios'
+import { BACKEND_SERVER } from '../constants/constants'
 
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
@@ -111,7 +112,7 @@ export default function Sidenav() {
       formData.append('folder', uploadFolder)
       
       //Make an axios post request
-      axios.post("http://localhost:80/photography_api/files/upload_files.php", formData, {
+      axios.post(BACKEND_SERVER + "/files/upload_files.php", formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -131,13 +132,13 @@ export default function Sidenav() {
 
   //Fetch the folders that are already in the database 
   useEffect(()=>{
-    axios.get("http://localhost:80/photography_api/projects/fetch-projects.php")
+    axios.get(BACKEND_SERVER + "/projects/fetch-projects.php")
       .then(response=>{ 
 
         if(response.data?.status && response.data.status == 0){
           notify(response.data.msg)
         } else { 
-          setExistingFolder(response.data.folders)
+          setExistingFolder(response.data.folders) 
         }
 
       })

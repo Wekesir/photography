@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
+import Loading from './Loading'
+import { BACKEND_SERVER } from '../constants/constants'
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
 
 export default function Clients() {
     
 const [clients, setClients] = useState([])
+const [isLoading, setIsLoading] = useState(true)
 
 const [formData, setFormData] = useState({
     username: '',
@@ -15,9 +18,9 @@ const [formData, setFormData] = useState({
   });
 
 useEffect(()=>{
-    axios.get("http://localhost:80/photography_api/clients/getClientsList.php")
+    axios.get(BACKEND_SERVER + "/clients/getClientsList.php")
         .then((response)=>{
-            console.log(response.data); //Data from the console
+            setIsLoading(false)
             setClients(response.data)
             
         }).catch((error) => {
@@ -58,7 +61,7 @@ function handleDelete(event, client){
     event.target.setAttribute("disabled", "")
 
     //send the data to the deleting php file 
-    axios.post('http://localhost:80/photography_api/clients/deleteClient.php', client)
+    axios.post(BACKEND_SERVER + '/clients/deleteClient.php', client)
         .then((res) => {
 
             if (res.data.status == 1){
@@ -90,9 +93,8 @@ function handleSubmit(e){
 
     spinner.classList.remove("d-none");
 
-    axios.post("http://localhost:80/photography_api/clients/editClient.php", formData)
+    axios.post(BACKEND_SERVER + "/clients/editClient.php", formData)
     .then((response)=>{
-        console.log(response.data); //Data from the console
         
         if (response.data?.status && response.data.status === 1){
 
@@ -130,6 +132,10 @@ function handleSubmit(e){
 
   return (
     <>
+        { isLoading ? (
+            <Loading />
+        ) : (
+
         <table className="table table-striped table-sm table-dark table-hover">
         <thead>
             <tr>
@@ -158,6 +164,7 @@ function handleSubmit(e){
            
         </tbody>
         </table>
+        )}
 
         
         <div className="modal fade" id="editUsermodal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">

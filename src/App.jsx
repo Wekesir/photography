@@ -16,7 +16,7 @@ import ProjectDetailsPage from './pages/ProjectDetailsPage'
 function App() {
   const [loggedInUserData, setLoggedInUserData] = useState(null);
 
-  const router = createBrowserRouter(
+  const router = createBrowserRouter( 
     createRoutesFromElements(
       <Route path='/' element={ <Root/> }>
           <Route index element={ <Index /> }></Route>

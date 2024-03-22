@@ -55,6 +55,6 @@ export function handleDownloadFolder(folderDetails) {
           window.URL.revokeObjectURL(blobUrl);
       })
       .catch(error => {
-          notify("Error downloading project : " + error)
+          alert("Error downloading project : " + error)
       })
 }
