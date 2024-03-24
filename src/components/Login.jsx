@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom';
 import UserContext from '../contexts/UserContext'
 import { BACKEND_SERVER } from '../constants/constants'
+import logo from '../assets/logo.png'
 
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
@@ -69,7 +70,8 @@ export default function Login() {
 
   return (
     <div className="container-fluid">
-        <div className='px-3 py-5 col-md-4 col-12 mx-auto border-start border-warning' style={{ backgroundColor : 'rgba(0,0,0,0.3)' }}>
+        <div className='p-3 col-md-4 col-12 mx-auto border-start border-warning' style={{ backgroundColor : 'rgba(0,0,0,0.3)' }}>
+            <img src={logo} className='d-block rounded mx-auto mb-2' alt="logo" style={{height: '100px'}}/>
             <h4 className="text-white text-center"> <i className="bi bi-box-arrow-in-right"></i> SIGN IN</h4> <hr className="border border-secondary" />
             <form action="#" method="POST" onSubmit={ handleSubmit }>
                 <div className="mb-3">
