@@ -12,6 +12,7 @@ import ClientsList from './pages/ClientsPage'
 import UserContext from './contexts/UserContext'
 import ProjectsPage from './pages/ProjectsPage'
 import ProjectDetailsPage from './pages/ProjectDetailsPage'
+import ClientPortalAuth from './components/ClientPortalAuth'
 
 function App() {
   const [loggedInUserData, setLoggedInUserData] = useState(null);
@@ -28,6 +29,7 @@ function App() {
           <Route path="/clients" element={ <ClientsList /> }></Route>
           <Route path="/projects" element={ <ProjectsPage /> }></Route>
           <Route path="/proj/:id/:folder" element={ <ProjectDetailsPage /> }></Route>
+          <Route path="/clientAuth" element={ <ClientPortalAuth /> }></Route>
       </Route>  
     )
   );

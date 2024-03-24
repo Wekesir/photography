@@ -1,38 +1,39 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import bg_video from '../assets/photography_bg.mp4'
+import logo from '../assets/logo.png'
+import '../assets/css/homepage.css'
+
+import MainNavbar from '../components/MainNavbar'
 
 export default function index() {
+
+  document.title = "Lyrics Photography"
+
   return (
     <>
-      <div className="container-fluid p-0">
+      <div className="container-fluid p-0 bg-dark overflow-x-hidden">       
 
-        <nav className="navbar navbar-expand-lg bg-dark text-white">
-          <div className="container-fluid">
-            <Link className="navbar-brand text-white" to="#">
-              <img src="#" alt="Logo" width="30" height="24" className="d-inline-block align-text-top" />
-              Lyrics Studios
-            </Link>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarNav">
-              <ul className="navbar-nav">
-                <li className="nav-item">
-                  <Link className="nav-link active text-white" aria-current="page" to="#">Home</Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="#">Features</Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="#">Pricing</Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link " aria-disabled="true">Disabled</Link>
-                </li>
-              </ul>
-            </div>
-          </div> 
-        </nav> 
+        <section>
+            <MainNavbar />
+        </section>
+
+        <section id="backroundVideo" style={{ position: 'relative' }}>
+
+          <video autoPlay loop muted>
+            <source src={ bg_video } type="video/mp4" />
+          </video>
+
+          <div id="textOverlayDiv" className="text-center">
+              <p>
+                Welcome to <br />
+                Lyrics Photography
+              </p>
+
+              <button className='btn btn-primary text-center py-3 px-5 gradient-background fw-bold'>Get Started</button>
+          </div>  
+
+        </section>        
         
       </div> 
 

@@ -2,12 +2,13 @@ import React, { useContext, useState } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom';
 import UserContext from '../contexts/UserContext'
+import { BACKEND_SERVER } from '../constants/constants'
 
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
 
 export default function Login() {
-
+ 
     const navigate = useNavigate();
 
     const { setLoggedInUserData } = useContext(UserContext);
@@ -40,7 +41,7 @@ export default function Login() {
         loginButton.querySelector("span").classList.remove("d-none");
 
         //Axios post request
-        axios.post("http://localhost:80/photography_api/auth/login.php", loginData)
+        axios.post(BACKEND_SERVER + "/auth/login.php", loginData)
             .then((response)=>{
                 console.log(response.data); //Data from the console
                 

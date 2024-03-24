@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Autour+One&display=swap');
+
+#frontendNav {
+    z-index : 10;
+}
+
+.gradient-text {
+    /* font-size: 24px; */
+    font-weight: bold;
+    background: linear-gradient(45deg, yellow, goldenrod, red);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.gradient-background {
+    background: linear-gradient(to right, yellow, goldenrod);
+}
+
+#textOverlayDiv{
+    position: absolute; 
+    top: 50%; 
+    transform: translateY(-50%);
+    font-size: 60px;
+    color: white;
+    font-family: 'Autour One';
+    font-style: normal;
+    font-weight: 400;
+    width: 100%;
+}
+
+video {
+    width : 100%;
+    object-fit : cover;
+    height: 525px;
+}
+
