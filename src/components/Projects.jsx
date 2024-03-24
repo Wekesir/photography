@@ -151,11 +151,12 @@ export default function Projects() {
     }
       
     function handleSubmitSelectedClients() {
+
         if(!selectedClients.length) {
             notify("No clients have been selected. Add a client and try again")
         }   else {
             axios.post(BACKEND_SERVER + "/projects/share-folder.php", {FOLDER : selectedShareFolder, CLIENTS : selectedClients})
-                .then(response => {
+                .then(response => { console.log(response.data)
 
                 })
                 .catch(error => {
@@ -208,7 +209,7 @@ export default function Projects() {
             </div>
             <div className="modal-body">
                 <div className="row">
-                    <div className="col-6">
+                    <div className="col-md-6">
                         <ul className="nav nav-tabs border-bottom border-secondary" style={{ whiteSpace : 'nowrap', width:'100%' }} id="myTab" role="tablist">
                             <li className="nav-item" role="presentation">
                                 <button className="nav-link active btn btn-sm btn-secondary text-white" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">New Clients</button>
@@ -254,7 +255,7 @@ export default function Projects() {
                         </div>
                         </div>
                     </div>
-                    <div className="col-6">
+                    <div className="col-md-6">
                         <h6>Selected Clients</h6> <hr className='border border-secondary' />
 
                         { !selectedClients.length ? (
@@ -288,7 +289,7 @@ export default function Projects() {
             </div>
             <div className="modal-footer border-top border-secondary">
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-primary" onClick={ handleSubmitSelectedClients }>Understood</button>
+                <button type="button" className="btn btn-primary" onClick={ handleSubmitSelectedClients }>Submit</button>
             </div>
             </div>
         </div>
