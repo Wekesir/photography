@@ -25,6 +25,9 @@ export default function ClientPortalAuth() {
     }
 
     function handleEmailSubmit(event) { //Sends the email to the backend server
+        event.target.querySelector('span').classList.remove("d-none")
+        event.target.setAttribute('disabled', true);
+
         //check to make sure the email has been provided
         if (!formInput.email) {
             notify("An email address must be provided to continue")
@@ -46,9 +49,15 @@ export default function ClientPortalAuth() {
             })
 
         }
+
+        event.target.querySelector('span').classList.add("d-none")
+        event.target.removeAttribute('disabled');
     }
 
-    function handleCodeSubmit() {
+    function handleCodeSubmit(event) {
+        event.target.querySelector('span').classList.remove("d-none")
+        event.target.setAttribute('disabled', true);
+
         //check to make sure the email and code have been provided
         if(!formInput.email || !formInput.code){
             notify("Please provide both an email and a verification code.")
@@ -69,6 +78,9 @@ export default function ClientPortalAuth() {
             })
 
         }
+
+        event.target.querySelector('span').classList.add("d-none")
+        event.target.removeAttribute('disabled');
     }
 
     function notify(message){
@@ -96,7 +108,7 @@ export default function ClientPortalAuth() {
                     </div>
                     <div className="mb-3 d-grid gap-2">
                         <button className="btn btn-secondary fw-bold" onClick={ (event)=>{ showCodeInput ? handleCodeSubmit(event) : handleEmailSubmit(event)  } }>
-                            <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> &nbsp;
+                            <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> &nbsp;
                             Submit 
                         </button>
                     </div>
