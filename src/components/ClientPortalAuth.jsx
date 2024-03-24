@@ -25,8 +25,10 @@ export default function ClientPortalAuth() {
     }
 
     function handleEmailSubmit(event) { //Sends the email to the backend server
-        event.target.querySelector('span').classList.remove("d-none")
-        event.target.setAttribute('disabled', true);
+        event.preventDefault();
+
+        document.querySelector('span').classList.remove("d-none")
+        event.target.disabled = true
 
         //check to make sure the email has been provided
         if (!formInput.email) {
@@ -34,12 +36,12 @@ export default function ClientPortalAuth() {
         } else {
 
             axios.post(BACKEND_SERVER + "/clients/send-auth-code.php", {CLIENT_EMAIL : formInput.email})
-            .then((response) => { 
+            .then((response) => {
 
                 if(response.data?.status && response.data.status == 1) { //Success
                     setShowCodeInput(true) //make the code input visible
                     notify(response.data.msg)
-                } else if(response.data?.status && response.data.status == 0) { //Error Message 
+                } else { //Error Message 
                     notify(response.data.msg) //Display the error message 
                 }
 
@@ -50,13 +52,15 @@ export default function ClientPortalAuth() {
 
         }
 
-        event.target.querySelector('span').classList.add("d-none")
-        event.target.removeAttribute('disabled');
+        document.querySelector('span').classList.add("d-none")
+        event.target.disabled = false
     }
 
     function handleCodeSubmit(event) {
-        event.target.querySelector('span').classList.remove("d-none")
-        event.target.setAttribute('disabled', true);
+        event.preventDefault();
+
+        document.querySelector('span').classList.remove("d-none")
+        event.target.disabled = true
 
         //check to make sure the email and code have been provided
         if(!formInput.email || !formInput.code){
@@ -79,8 +83,8 @@ export default function ClientPortalAuth() {
 
         }
 
-        event.target.querySelector('span').classList.add("d-none")
-        event.target.removeAttribute('disabled');
+        document.querySelector('span').classList.add("d-none")
+        event.target.disabled = false
     }
 
     function notify(message){
@@ -104,7 +108,7 @@ export default function ClientPortalAuth() {
                     </div>                    
                     <div className={`mb-3 ${showCodeInput ? 'd-block' : 'd-none'} `} >
                         <label htmlFor="code" className='text-white fw-bold mb-2'>AUTHORIZATION CODE</label>
-                        <input type="text" name="code" id="code" onChange={handleinputChange} value={formInput.code || ""} className='form-control border border-secondary text-white bg-dark' required />
+                        <input type="text" name="code" id="code" onChange={handleinputChange} value={formInput.code || ""} className='form-control border border-secondary text-white bg-dark'  />
                     </div>
                     <div className="mb-3 d-grid gap-2">
                         <button className="btn btn-secondary fw-bold" onClick={ (event)=>{ showCodeInput ? handleCodeSubmit(event) : handleEmailSubmit(event)  } }>

@@ -14,9 +14,9 @@ export default function AddClientsPage() {
         </div>
         <div className="col-md-9">
           <h4 className=""><i className="bi bi-house"></i> Add Client(s)</h4>
-          <AddClient widthClass="col-6"/>
+          <AddClient widthClass="col-6"/> 
         </div>
-      </div>
+      </div> 
     </div>
   )
 }
