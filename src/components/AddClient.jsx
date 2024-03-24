@@ -3,6 +3,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
 import axios from 'axios';
 import { BACKEND_SERVER } from '../constants/constants'
+import { useNavigate } from 'react-router-dom';
 
 export default function AddClient( { widthClass } ) {
 
@@ -11,6 +12,8 @@ export default function AddClient( { widthClass } ) {
         phoneNumber: '',
         email: ''
       });
+
+    const navigate = useNavigate()
 
     function handleChange(event){
         const { name, value } = event.target;
@@ -37,7 +40,10 @@ export default function AddClient( { widthClass } ) {
 
                 setFormData({username: '',
                 phoneNumber: '',
-                email: ''});     
+                email: ''});   
+                
+                navigate("/clients")
+                
             } else {
                 notify(response.data.msg);
             }
