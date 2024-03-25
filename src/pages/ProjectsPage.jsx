@@ -1,9 +1,14 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import Projects from '../components/Projects'
 import Navbar from '../components/Navbar'
 import Sidenav from '../components/Sidenav' 
 
 export default function ProjectsPage() {
+
+  const navigate = useNavigate()
+
+  (!isLoggedIn) && navigate("/login")
 
 document.title = "Projects | Lyrics Photography"
 

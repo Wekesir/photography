@@ -4,6 +4,16 @@ import UserContext from '../contexts/UserContext'
 
 export default function Navbar() {
     const { loggedInUserData } = useContext(UserContext)
+
+    //Sign out 
+    function handleSignOut(event) {
+        /**
+         * For the sign out, basically set the loggedInuserData to an empty object 
+         */
+        event.preventDefault()
+        
+    }
+
   return (
     <>
         <nav className="navbar navbar-expand-lg bg-dark text-white" data-bs-theme="dark">
@@ -21,7 +31,7 @@ export default function Navbar() {
                         <ul className="dropdown-menu dropdown-menu-end">
                             <li><Link className="dropdown-item" to="#"><i className="bi bi-person"></i> Update Profile</Link></li>
                             <li><Link className="dropdown-item" to="#"><i className="bi bi-key"></i> Update Password</Link></li>
-                            <li><Link className="dropdown-item" to="#"><i className="bi bi-box-arrow-left"></i> Sign Out</Link></li>
+                            <li onClick={ handleSignOut }><Link className="dropdown-item" to="#"><i className="bi bi-box-arrow-left"></i> Sign Out</Link></li>
                         </ul>
                     </li>
                 </ul>               

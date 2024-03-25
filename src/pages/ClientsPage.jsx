@@ -2,11 +2,16 @@ import React, { useState } from 'react'
 import Clients from '../components/Clients'
 import Navbar from '../components/Navbar'
 import Sidenav from '../components/Sidenav'
+import { useNavigate } from 'react-router-dom'
 
 export default function ClientsPage() {
 
   document.title = "Clients | Lyrics Photography"
 
+  const navigate = useNavigate()
+
+  (!isLoggedIn) && navigate("/login")
+ 
   return (
     <div className='bg-dark container-fluid ps-0' style={{height: '100vh'}}>
         <Navbar />

@@ -1,5 +1,13 @@
 import axios from "axios"
 import { BACKEND_SERVER } from '../constants/constants'
+import UserContext from "../contexts/UserContext"
+import { useContext } from "react"
+
+export function isLoggedIn(){
+  const { loggedInUserData } = useContext(UserContext)
+
+  return ( !loggedInUserData || !!loggedInUserData) ? false : true
+}
 
 export function getRealFileName(filepath){
     /**
