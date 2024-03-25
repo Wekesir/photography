@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import SideNav from '../components/Sidenav'
 import Navbar from '../components/Navbar'
 import AddClient from '../components/AddClient'
+import { isLoggedIn } from '../utils/helpers'
 
 export default function AddClientsPage() {
 

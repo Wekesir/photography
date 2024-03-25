@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import UserContext from '../contexts/UserContext'
 
 export default function Navbar() {
-    const { loggedInUserData } = useContext(UserContext)
+    const { loggedInUserData, setLoggedInUserData } = useContext(UserContext)
 
     //Sign out 
     function handleSignOut(event) {
@@ -11,7 +11,7 @@ export default function Navbar() {
          * For the sign out, basically set the loggedInuserData to an empty object 
          */
         event.preventDefault()
-        
+        setLoggedInUserData({})
     }
 
   return (

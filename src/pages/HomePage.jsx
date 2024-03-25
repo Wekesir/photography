@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Home from '../components/Home'
 import SideNav from '../components/Sidenav'
 import Navbar from '../components/Navbar'
+import { isLoggedIn } from '../utils/helpers'
 
 export default function HomePage() {
   document.title = "Home | Photography"

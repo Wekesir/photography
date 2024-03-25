@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Projects from '../components/Projects'
 import Navbar from '../components/Navbar'
 import Sidenav from '../components/Sidenav' 
+import { isLoggedIn } from '../utils/helpers'
 
 export default function ProjectsPage() {
 

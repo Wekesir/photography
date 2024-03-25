@@ -3,6 +3,7 @@ import Clients from '../components/Clients'
 import Navbar from '../components/Navbar'
 import Sidenav from '../components/Sidenav'
 import { useNavigate } from 'react-router-dom'
+import { isLoggedIn } from '../utils/helpers'
 
 export default function ClientsPage() {
 
