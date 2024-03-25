@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ProjectDetails from '../components/ProjectDetails'
 import Sidenav from '../components/Sidenav'
@@ -11,7 +11,12 @@ export default function ProjectDetailsPage() {
 
     const navigate = useNavigate()
 
-    (!isLoggedIn) && navigate("/login")
+    const { loggedInUserData, setLoggedInUserData } = useContext(UserContext)
+
+    if( !isLoggedIn(loggedInUserData) ) {
+      navigate("/login")
+      return null //Prevents the rendering of the rest of the component
+    } 
 
     return (
       <div className='bg-dark container-fluid ps-0' style={{height: '100vh'}}>

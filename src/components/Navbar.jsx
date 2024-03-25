@@ -1,9 +1,11 @@
 import React, { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import UserContext from '../contexts/UserContext'
 
 export default function Navbar() {
     const { loggedInUserData, setLoggedInUserData } = useContext(UserContext)
+
+    const navigate = useNavigate()
 
     //Sign out 
     function handleSignOut(event) {
@@ -12,6 +14,7 @@ export default function Navbar() {
          */
         event.preventDefault()
         setLoggedInUserData({})
+        navigate("/")
     }
 
   return (

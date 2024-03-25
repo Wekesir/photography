@@ -14,7 +14,10 @@ export default function index() {
 
   const navigate = useNavigate()
 
-  (!isLoggedIn) && navigate("/login")
+  if( !isLoggedIn ) {
+    navigate("/login")
+    return null //Prevents the rendering of the rest of the component
+  }
 
   return (
     <>

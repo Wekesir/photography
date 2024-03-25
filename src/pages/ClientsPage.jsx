@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import Clients from '../components/Clients'
 import Navbar from '../components/Navbar'
 import Sidenav from '../components/Sidenav'
@@ -11,7 +11,13 @@ export default function ClientsPage() {
 
   const navigate = useNavigate()
 
-  (!isLoggedIn) && navigate("/login")
+  const { loggedInUserData, setLoggedInUserData } = useContext(UserContext)
+
+  if( !isLoggedIn(loggedInUserData) ) {
+    navigate("/login")
+    return null //Prevents the rendering of the rest of the component
+  } 
+    
  
   return (
     <div className='bg-dark container-fluid ps-0' style={{height: '100vh'}}>
