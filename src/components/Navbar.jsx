@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import UserContext from '../contexts/UserContext'
 
 export default function Navbar() {
-    const user = useContext(UserContext)
+    const { loggedInUserData } = useContext(UserContext)
   return (
     <>
         <nav className="navbar navbar-expand-lg bg-dark text-white" data-bs-theme="dark">
@@ -16,7 +16,7 @@ export default function Navbar() {
                 <ul className="navbar-nav">
                     <li className="nav-item">
                         <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Welcome, user
+                        Welcome, { loggedInUserData.name }
                         </Link>
                         <ul className="dropdown-menu dropdown-menu-end">
                             <li><Link className="dropdown-item" to="#"><i className="bi bi-person"></i> Update Profile</Link></li>

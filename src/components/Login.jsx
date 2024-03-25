@@ -26,7 +26,7 @@ export default function Login() {
         const { name, value } = event.target;
 
         setLoginData(
-            prevLogin => ({...prevLogin, [name]:value})  //The [name] is dynamically generated and thats why we have it iin square brackets  
+            prevLogin => ({...prevLogin, [name]:value})  //The [name] is dynamically generated and thats why we have it in square brackets  
         )
     }
 
@@ -43,17 +43,16 @@ export default function Login() {
 
         //Axios post request
         axios.post(BACKEND_SERVER + "/auth/login.php", loginData)
-            .then((response)=>{
-                console.log(response.data); //Data from the console
+            .then((response)=>{ 
                 
                 if (response.data?.status && response.data.status === 1){
                     setLoggedInUserData(response.data.data); //Sets the logged In user payload to the user context
-                    navigate("/home");
+                    navigate("/projects");
                 } else {
                     notify(response.data.msg);
                 }
             }).catch((error) => {
-                    notify(error);
+                    notify(error); 
 
                     //Reset the form Data
                     setLoginData({email:"", password:""});       
