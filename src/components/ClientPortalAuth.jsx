@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import MainNavbar from './MainNavbar'
 import logo from '../assets/logo.png'
 import { BACKEND_SERVER } from '../constants/constants'
 import axios from 'axios'
+import ClientContext from '../contexts/ClientsContext'
 
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
@@ -15,6 +16,7 @@ export default function ClientPortalAuth() {
     const [showCodeInput, setShowCodeInput] = useState(false)
     const [formInput, setFormInput] = useState([]) //Will hold the email and the verification code of the user 
     const  navigate = useNavigate()
+    const { setLoggedInClientData } = useContext(ClientContext)
 
     function handleinputChange(event) {
         const {name, value} = event.target
@@ -36,7 +38,7 @@ export default function ClientPortalAuth() {
         } else {
 
             axios.post(BACKEND_SERVER + "/clients/send-auth-code.php", {CLIENT_EMAIL : formInput.email})
-            .then((response) => {
+            .then((response) => { console.log(response.data)
 
                 if(response.data?.status && response.data.status == 1) { //Success
                     setShowCodeInput(true) //make the code input visible
@@ -68,10 +70,12 @@ export default function ClientPortalAuth() {
         }else{
 
             axios.post(BACKEND_SERVER + "/clients/verify-auth-code.php", formInput)
-            .then((response) => { 
+            .then((response) => { console.log(response.data)
 
                 if(response.data?.status && response.data.status == 1) { //Success
-                    navigate("/")
+                    navigate("/clienthomepage")
+                    setLoggedInClientData(response.data.data)
+                    notify(response.data.msg)
                 } else if(response.data?.status && response.data.status == 0) { //Error Message 
                     notify(response.data.msg) //Display the error message 
                 }

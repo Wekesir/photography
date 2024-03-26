@@ -4,6 +4,7 @@ import ProjectDetails from '../components/ProjectDetails'
 import Sidenav from '../components/Sidenav'
 import Navbar from '../components/Navbar'
 import { isLoggedIn } from '../utils/helpers'
+import UserContext from '../contexts/UserContext'
 
 export default function ProjectDetailsPage() {
 
