@@ -1,21 +1,28 @@
 import React, { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import UserContext from '../contexts/UserContext'
+import Cookies from 'js-cookie'
+import { useDispatch } from 'react-redux'
+import { logOut } from '../store/UserSlice'
 
 export default function Navbar() {
-    const { loggedInUserData, setLoggedInUserData } = useContext(UserContext)
 
     const navigate = useNavigate()
+    const dispatch =  useDispatch()
 
-    //Sign out 
-    function handleSignOut(event) {
+    function handleLogOut() {
         /**
-         * For the sign out, basically set the loggedInuserData to an empty object 
+         * This function handles the logout of the current user
+         * Remove the jwt cookie stored
+         * Execute the logOut action in the reducer 
          */
-        event.preventDefault()
-        setLoggedInUserData({})
-        navigate("/")
-    }
+
+        Cookies.remove("authJWTToken")
+
+        dispatch( logOut() )
+
+        navigate("/login")
+      
+      }
 
   return (
     <>
@@ -34,7 +41,7 @@ export default function Navbar() {
                         <ul className="dropdown-menu dropdown-menu-end">
                             <li><Link className="dropdown-item" to="#"><i className="bi bi-person"></i> Update Profile</Link></li>
                             <li><Link className="dropdown-item" to="#"><i className="bi bi-key"></i> Update Password</Link></li>
-                            <li onClick={ handleSignOut }><Link className="dropdown-item" to="#"><i className="bi bi-box-arrow-left"></i> Sign Out</Link></li>
+                            <li onClick={ handleLogOut }><Link className="dropdown-item" to="#"><i className="bi bi-box-arrow-left"></i> Sign Out</Link></li>
                         </ul>
                     </li>
                 </ul>               

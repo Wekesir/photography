@@ -1,21 +1,9 @@
 import React, { useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
 import Projects from '../components/Projects'
 import Navbar from '../components/Navbar'
 import Sidenav from '../components/Sidenav' 
-import { isLoggedIn } from '../utils/helpers'
-import  UserContext from '../contexts/UserContext'
 
 export default function ProjectsPage() {
-
-  const navigate = useNavigate()
-
-  const { loggedInUserData, setLoggedInUserData } = useContext(UserContext)
-
-  if( !isLoggedIn(loggedInUserData) ) {
-    navigate("/login")
-    return null //Prevents the rendering of the rest of the component
-  } 
 
 document.title = "Projects | Lyrics Photography"
 

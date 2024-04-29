@@ -1,21 +1,23 @@
 import React, { useContext, useState } from 'react'
 import axios from 'axios'
-import { useNavigate, Link } from 'react-router-dom';
-import UserContext from '../contexts/UserContext'
+import { useNavigate, Link } from 'react-router-dom'
 import { BACKEND_SERVER } from '../constants/constants'
 import logo from '../assets/logo.png'
+import Cookies  from "js-cookie"
 
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
 
+import { useDispatch } from 'react-redux'
+import { loginSuccess } from '../store/UserSlice'
+
 export default function Login() {
- 
-    const navigate = useNavigate();
+  
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
 
-    const { setLoggedInUserData } = useContext(UserContext);
-
-    let loginButton = document.getElementById("loginButton"); 
-    let passwordInputField = document.getElementById("passwordInput");
+    let loginButton = document.getElementById("loginButton")
+    let passwordInputField = document.getElementById("passwordInput")
 
     const [loginData, setLoginData] = useState({
         email: "",
@@ -23,7 +25,7 @@ export default function Login() {
     })
 
     function handleChange(event){
-        const { name, value } = event.target;
+        const { name, value } = event.target
 
         setLoginData(
             prevLogin => ({...prevLogin, [name]:value})  //The [name] is dynamically generated and thats why we have it in square brackets  
@@ -31,36 +33,42 @@ export default function Login() {
     }
 
     function handlePasswordToggle(){       
-        passwordInputField.type === "password" ? passwordInputField.type = "text" :  passwordInputField.type = "password";        
+        passwordInputField.type === "password" ? passwordInputField.type = "text" :  passwordInputField.type = "password"    
     }
 
     function handleSubmit(event){
-        event.preventDefault();
+        event.preventDefault()
 
         //Disbale the submit button and activate the spinner
-        loginButton.disabled = true;
-        loginButton.querySelector("span").classList.remove("d-none");
+        loginButton.disabled = true
+        loginButton.querySelector("span").classList.remove("d-none")
 
         //Axios post request
         axios.post(BACKEND_SERVER + "/auth/login.php", loginData)
-            .then((response)=>{ 
+            .then((response)=>{ console.log(response)
                 
-                if (response.data?.status && response.data.status === 1){
-                    setLoggedInUserData(response.data.data); //Sets the logged In user payload to the user context
-                    navigate("/projects");
+                if (response.data?.status && response.data.status === 1){ //If the login is successful
+                  
+                    //Call the dispatch action that stores the user information in the store 
+                    dispatch( loginSuccess( response.data.user ) )
+
+                    //set the jwt token inside a cookie 
+                    Cookies.set('authJWTToken', response.data.jwt, { expires: 1, secure: false, sameSite: 'strict' }) //Expires in one day 
+
+                    navigate("/projects")
                 } else {
-                    notify(response.data.msg);
+                    notify(response.data.msg) 
                 }
             }).catch((error) => {
-                    notify(error); 
+                notify(error)
 
-                    //Reset the form Data
-                    setLoginData({email:"", password:""});       
+                //Reset the form Data
+                setLoginData({email:"", password:""})     
             });
 
             //Enable the submit button and hide the spinner 
-            loginButton.disabled = false;
-            loginButton.querySelector("span").classList.add("d-none");
+            loginButton.disabled = false
+            loginButton.querySelector("span").classList.add("d-none")
     }
 
     function notify(message){

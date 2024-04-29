@@ -4,20 +4,12 @@ import { Link } from 'react-router-dom'
 import bg_video from '../assets/photography_bg.mp4'
 import logo from '../assets/logo.png'
 import '../assets/css/homepage.css'
-import { isLoggedIn } from '../utils/helpers'
 
 import MainNavbar from '../components/MainNavbar'
 
 export default function index() {
 
   document.title = "Lyrics Photography"
-
-  const navigate = useNavigate()
-
-  if( !isLoggedIn ) {
-    navigate("/login")
-    return null //Prevents the rendering of the rest of the component
-  }
 
   return (
     <>

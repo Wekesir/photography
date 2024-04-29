@@ -3,9 +3,6 @@ import { BACKEND_SERVER } from '../constants/constants'
 import UserContext from "../contexts/UserContext"
 import { useContext } from "react"
 
-export function isLoggedIn(loginObj){
-  return ( Object.entries(loginObj).length === 0) ? false : true
-}
 
 export function getRealFileName(filepath){
     /**
