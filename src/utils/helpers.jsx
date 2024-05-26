@@ -1,12 +1,10 @@
 import axios from "axios"
 import { BACKEND_SERVER } from '../constants/constants'
-import UserContext from "../contexts/UserContext"
-import { useContext } from "react"
 
 
 export function getRealFileName(filepath){
     /**
-     * This function captures the filepath and retirns the real filename
+     * This function captures the filepath and returns the real filename
      * Every file has a timestamp attached to it and  is separated  by an underscore. 
      * 
      */

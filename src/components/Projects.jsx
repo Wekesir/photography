@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import Loading from './Loading'
 import AddClient from './AddClient';
 
@@ -11,75 +12,100 @@ import { handleDownloadFolder } from '../utils/helpers'
 
 export default function Projects() {
 
-    const [folders, setFolders] = useState([])
-    const [selectedRenameFolder, setSelectedRenameFolder] = useState([]) //Holds the folder we want to rename 
+    const [folders, setFolders] = useState([]) // Initialized to an empty array
+    const [selectedRenameFolder, setSelectedRenameFolder] = useState({}) // Initialized to an empty object
     const [isLoading, setIsLoading] = useState(true)
-    const [selectedShareFolder, setSelectedShareFolder] = useState([]) //Holds the fodler that access is to be shared 
-    const [clients, setClients] = useState([]) //Clients registered in the database 
-    const [selectedClients, setSelectedClients] = useState([]) //Cients who will have access to the project
+    const [selectedShareFolder, setSelectedShareFolder] = useState({}) // Initialized to an empty object
+    const [clients, setClients] = useState({}) // Initialized to an empty array
+    const [selectedClients, setSelectedClients] = useState([]) // Initialized to an empty array
 
     const navigate = useNavigate();
 
+    const jwt = Cookies.get("authJWTToken")
+
     //Fetch all the folders in the database 
     useEffect(()=>{
-        axios.get(BACKEND_SERVER + "/projects/fetch-projects.php")
-          .then(response=>{ 
-    
-            if(response.data?.status && response.data.status == 0){
-              notify(response.data.msg)
-            } else { 
-                setIsLoading(false)
-                setFolders( response.data.folders )  
+        const fetchProjects = async () => {
+            try {
+                
+                const response = await axios.get(BACKEND_SERVER + "/projects/fetch-projects.php", {
+                    headers : {
+                    'Authorization' : `Bearer ${jwt}`, 
+                    'Content-Type' : 'Application/json'
+                    }
+                })
+            
+                if(response.data?.status && response.data.status == 0){
+                    notify(response.data.msg)
+                } else { 
+                    setIsLoading(false)
+                    setFolders( response.data.folders )  
+                }        
+            } catch (error) {
+                notify('Error: ' + error)
             }
-    
-          })
-          .catch(error=>{
-            notify("Error: " + error)
-          }) 
+        }
+
+        fetchProjects();
     }, [])
 
     useEffect(()=>{
-        axios.get(BACKEND_SERVER + "/clients/getClientsList.php")
-            .then((response)=>{
-                setClients(response.data)                
-            }).catch((error) => {
-                notify(error);      
-            });
+        const fetchClients = async () =>{
+            try {
+                const response = await axios.get(BACKEND_SERVER + "/clients/getClientsList.php", {
+                    headers : {
+                        'Authorization' : `Bearer ${jwt}`,
+                        'Content-Type' : "Application/json"
+                    }
+                })
+
+                if(response.data?.status && response.data.status == 0){
+                    notify(response.data.msg)
+                } else {
+                    setClients(response.data.clients)  
+                }                       
+                
+            } catch (error) {
+                notify('Error: '+ error)
+            }
+        }
+
+        fetchClients();
     }, [])
 
     function notify(message){
         toast(message)
     }
 
-    function handleDelete(event, deleteId){
+    async function handleDelete(event, deleteId) {
         event.preventDefault();
-        //Check if the folder id has been provided
-        if(!deleteId){
+        // Check if the folder id has been provided
+        if (!deleteId) {
             notify("The Folder Id is missing, delete action can not be executed ")
         } else {
             const spinner = event.target.querySelector("span")
             spinner.classList.toggle("d-none")
-
-            axios.post(BACKEND_SERVER + '/projects/delete-project.php', {PROJECT_ID : deleteId})
-                .then(response => { 
-                    notify(response.data.msg)
-                    spinner.classList.toggle("d-none")
-
-                    //if it was a success
-                    if(response.data?.status && response.data.status == 1){
-                        //Hide the project just to prevent reloading the component 
-                        const folderContainer = event.target.closest('div.folderContainer')
-
-                        if (folderContainer){
-                            folderContainer.classList.add("d-none")
-                        }
+    
+            try {
+                const response = await axios.post(BACKEND_SERVER + '/projects/delete-project.php', { PROJECT_ID: deleteId })
+    
+                notify(response.data.msg)
+                spinner.classList.toggle("d-none")
+    
+                // if it was a success
+                if (response.data?.status && response.data.status == 1) {
+                    // Hide the project just to prevent reloading the component 
+                    const folderContainer = event.target.closest('div.folderContainer')
+    
+                    if (folderContainer) {
+                        folderContainer.classList.add("d-none")
                     }
-                })
-                .catch(error =>  { 
-                    notify('Error: ' + error)
-                })
+                }
+            } catch (error) {
+                notify('Error: ' + error)
+            }
         }
-    }
+    }    
 
     function handleEdit(event, folderDetails){ 
         event.preventDefault()
@@ -89,37 +115,37 @@ export default function Projects() {
 
         //Set the selected folder in the state
         setSelectedRenameFolder( folderDetails )
-        console.log(folderDetails)
     }
 
     function handleRenameInput(event){
         setSelectedRenameFolder({...selectedRenameFolder, project_name : event.target.value}) //Updates the project name 
     }
 
-    function handleRenameSubmit(e) {
-        //activate the spinner
+    async function handleRenameSubmit(e) {
+        // Activate the spinner
         e.target.querySelector("span.spinner-border").classList.remove("d-none")
-
-        axios.post("http://localhost:80/photography_api/projects/rename-project.php", selectedRenameFolder)
-            .then(response => {
-                if (response.data.status === 1 && response.data?.status){
-                    //Loop through all the available folder in the folders state
-                    const newFolders = folders.map(folder => {
-                        return folder.project_id == selectedRenameFolder.project_id ? { ...folder, project_name: selectedRenameFolder.project_name } : folder
-                    })  
-
-                    setFolders(newFolders)                  
-                }
-
-                notify(response.data.msg) //Display the reponse mesage 
-            })
-            .catch(error => {
-                notify("Error: " + error)
-            })
-
-        //Hide the spinner
+    
+        try {
+            const response = await axios.post(BACKEND_SERVER + "/projects/rename-project.php", selectedRenameFolder)
+    
+            if (response.data.status === 1 && response.data?.status) {
+                // Loop through all the available folder in the folders state
+                const newFolders = folders.map(folder => {
+                    return folder.project_id == selectedRenameFolder.project_id ? { ...folder, project_name: selectedRenameFolder.project_name } : folder
+                })
+    
+                setFolders(newFolders)
+            }
+    
+            notify(response.data.msg) // Display the response message
+        } catch (error) {
+            notify("Error: " + error)
+        }
+    
+        // Hide the spinner
         e.target.querySelector("span.spinner-border").classList.add("d-none")
     }
+    
 
     function handleOpen(e, folderDetails){
         navigate(`/proj/${folderDetails.project_id}/${folderDetails.project_name}`)
@@ -150,52 +176,55 @@ export default function Projects() {
         setSelectedClients(newArr)
     }
       
-    function handleSubmitSelectedClients() {
-
-        if(!selectedClients.length) {
+    async function handleSubmitSelectedClients() {
+    
+        if (selectedClients.length == 0) {
             notify("No clients have been selected. Add a client and try again")
-        }   else {
-            axios.post(BACKEND_SERVER + "/projects/share-folder.php", {FOLDER : selectedShareFolder, CLIENTS : selectedClients})
-                .then(response => { console.log(response.data)
-
-                })
-                .catch(error => {
-                    notify(error)
-                })
+        } else {
+            try {
+                const response = await axios.post(BACKEND_SERVER + "/projects/share-folder.php", { FOLDER: selectedShareFolder, CLIENTS: selectedClients })
+            } catch (error) {
+                notify(error)
+            }
         }
     }
+    
 
   return (
     <>
-        <div className="container-fluid py-2">
+        <div className="container-fluid py-1">
             { isLoading ? (
                 <Loading />
             ) : (
                 <div className="row">
-                    {folders.map((folder, index) => {
-                        return(
-                            <div className="col-md-4 border border-secondary p-2 folderContainer" key={ index }>
-                                <div className="row text-white">
-                                    <div className="col-md-2 text-center"> <i className="bi bi-folder-fill"></i> </div>
-                                    <div className="col-md-7 text-truncate"> {folder.project_name} </div>
-                                    <div className="col-md-3 text-center">
-                                        <div className="dropdown">
-                                            <button className="btn btn-sm btn-default text-white btn-outline-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i className="bi bi-three-dots-vertical fw-bold"></i>
-                                            </button>
-                                            <ul className="dropdown-menu dropdown-menu-dark">
-                                                <li onClick={ (event)=>{ handleOpen(event, folder) } }><Link className="dropdown-item" to="#"><i className="bi bi-folder2-open"></i> &nbsp; Open</Link></li>
-                                                <li onClick={ ()=>{handleDownloadFolder(folder)} }><Link className="dropdown-item" to="#"><i className="bi bi-download"></i> &nbsp; Download</Link></li>
-                                                <li onClick={ (event)=>{handleEdit(event, folder)}}><Link className="dropdown-item" to="#"><i className="bi bi-pencil"></i> &nbsp; Rename</Link></li>
-                                                <li onClick={ ()=>{handleShareProject(folder)} }><Link className="dropdown-item" to="#"><i className="bi bi-share"></i> &nbsp; Share</Link></li>
-                                                <li onClick= { (event)=>{handleDelete(event, folder.project_id)}}><Link className="dropdown-item" to="#"><i className="bi bi-trash"></i> &nbsp; Delete &nbsp; <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"> </span> </Link></li>
-                                            </ul>
+                    {!folders || folders.length === 0 ? (
+                        <p>No folders found.</p>
+                    ) : (
+                        folders.map((folder, index) => {
+                            return(
+                                <div className="col-md-4 col-xs-6 border border-secondary p-2 folderContainer" key={ index }>
+                                    <div className="row text-white">
+                                        <div className="col-md-2 text-center"> <i className="bi bi-folder-fill"></i> </div>
+                                        <div className="col-md-7 text-truncate fw-bold" style={{ color: "rgba(254,255,252,1)" }}> {folder.project_name} </div>
+                                        <div className="col-md-3 text-center">
+                                            <div className="dropdown">
+                                                <button className="btn btn-sm btn-default text-white btn-outline-none fw-bold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i className="bi bi-three-dots-vertical fw-bold"></i>
+                                                </button>
+                                                <ul className="dropdown-menu dropdown-menu-dark">
+                                                    <li onClick={ (event)=>{ handleOpen(event, folder) } }><Link className="dropdown-item" to="#"><i className="bi bi-folder2-open"></i>   Open</Link></li>
+                                                    <li onClick={ ()=>{handleDownloadFolder(folder)} }><Link className="dropdown-item" to="#"><i className="bi bi-download"></i>   Download</Link></li>
+                                                    <li onClick={ (event)=>{handleEdit(event, folder)}}><Link className="dropdown-item" to="#"><i className="bi bi-pencil"></i>   Rename</Link></li>
+                                                    <li onClick={ ()=>{handleShareProject(folder)} }><Link className="dropdown-item" to="#"><i className="bi bi-share"></i>   Share</Link></li>
+                                                    <li onClick= { (event)=>{handleDelete(event, folder.project_id)}}><Link className="dropdown-item" to="#"><i className="bi bi-trash"></i>   Move to bin   <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"> </span> </Link></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
-                    })}
+                            )
+                        })
+                    )}
                 </div>
             )}
         </div>
@@ -237,21 +266,25 @@ export default function Projects() {
                                 </tr>
                             </thead>
                             <tbody>                       
-                                {clients.map((client, index) => (
+                            { clients.length === 0 ? (
+                                <tr>
+                                    <td colSpan="4">No clients found.</td>
+                                </tr>
+                            ) : (
+                                clients.map((client, index) => (
                                     <tr key={index}>
-                                    <th scope="row">{index + 1}</th>
-                                    <td>{client.client_name}</td>
-                                    <td>{client.client_email}</td>
-                                    <td>
-                                        <button className="btn btn-sm btn-primary" onClick={ ()=>{handleSelectClient(client)} }>select</button>
-                                    </td>
+                                        <th scope="row">{index + 1}</th>
+                                        <td>{client.client_name}</td>
+                                        <td>{client.client_email}</td>
+                                        <td>
+                                            <button className="btn btn-sm btn-primary" onClick={ ()=>{handleSelectClient(client)} }>select</button>
+                                        </td>
                                     </tr>
-                                ))}                    
+                                ))
+                            )}                
                             </tbody>
                             </table>
-
-                            ) }
-                            
+                            ) }                            
                         </div>
                         </div>
                     </div>
@@ -271,15 +304,22 @@ export default function Projects() {
                             </tr>
                         </thead>
                         <tbody>                       
-                            {selectedClients.map((selectedClient, index) => (
+                        {clients.length === 0 ? (
+                            <tr>
+                                <td colSpan="4">No clients found.</td>
+                            </tr>
+                        ) : (
+                            clients.map((client, index) => (
                                 <tr key={index}>
-                                <th scope="row">{index + 1}</th>
-                                <td>{selectedClient}</td>
-                                <td>
-                                    <button className="btn btn-sm btn-danger text-white" onClick={ ()=>{handleRemoveSelectedClient(selectedClient)} }>Remove</button>
-                                </td>
+                                    <th scope="row">{index + 1}</th>
+                                    <td>{client.client_name}</td>
+                                    <td>{client.client_email}</td>
+                                    <td>
+                                        <button className="btn btn-sm btn-primary" onClick={ ()=>{handleSelectClient(client)} }>select</button>
+                                    </td>
                                 </tr>
-                            ))}                    
+                            ))
+                        )}                 
                         </tbody>
                         </table>
 

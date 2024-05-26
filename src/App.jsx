@@ -21,6 +21,8 @@ import ProjectDetailsPage from './pages/ProjectDetailsPage'
 import ClientPortalAuth from './components/ClientPortalAuth'
 import ClientHomepagePage from './pages/ClientHomepagePage'
 import NewBookingsPage from './pages/NewBookingsPage'
+import ProfilePage from './pages/ProfilePage'
+import BookingsPage from './pages/BookingsPage'
 
 function App() {
   const [loggedInUserData, setLoggedInUserData] = useState({});
@@ -40,7 +42,9 @@ function App() {
             <Route path="/proj/:id/:folder" element={ <ProtectedRoutes> <ProjectDetailsPage /> </ProtectedRoutes> }></Route>
             <Route path="/clientAuth" element={ <ProtectedRoutes> <ClientPortalAuth /> </ProtectedRoutes> }></Route>
             <Route path="/clienthomepage" element={ <ProtectedRoutes> <ClientHomepagePage /> </ProtectedRoutes> }></Route>
-            <Route path="newbooking" element={ <ProtectedRoutes> <NewBookingsPage /> </ProtectedRoutes> }></Route>           
+            <Route path="/newbooking" element={ <ProtectedRoutes> <NewBookingsPage /> </ProtectedRoutes> }></Route> 
+            <Route path="/updateprofile" element={ <ProtectedRoutes> <ProfilePage /> </ProtectedRoutes> }></Route>      
+            <Route path="/bookings" element={ <ProtectedRoutes> <BookingsPage /> </ProtectedRoutes> }></Route>           
         </Route>  
     )
   );

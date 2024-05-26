@@ -132,19 +132,27 @@ export default function Sidenav() {
 
   //Fetch the folders that are already in the database 
   useEffect(()=>{
-    axios.get(BACKEND_SERVER + "/projects/fetch-projects.php")
-      .then(response=>{ 
+    const fetchFolders = async () => {
+      try {        
+        const jwtToken = Cookies.get("authJWTToken")
 
-        if(response.data?.status && response.data.status == 0){
+        const response = await axios.get(BACKEND_SERVER + "/projects/fetch-projects.php", {
+          headers : {
+            Authorization : `Bearer : ${jwtToken}`
+          }
+        }); console.log(response)    
+    
+        if(response.data?.status && response.data.status == 0){ //When there is an error trying to fetch existing folders
           notify(response.data.msg)
         } else { 
           setExistingFolder(response.data.folders) 
         }
+      } catch (error) {
+        notify(error)
+      } 
+    }
 
-      })
-      .catch(error=>{
-        notify("Error: " + error)
-      }) 
+    fetchFolders();
   }, [])
 
   //Clear selected lists when the modal has been clicked
@@ -176,7 +184,7 @@ export default function Sidenav() {
         <li className={`mainmenu ${isDropdownActive(1) ? 'active' : ''}`} onClick={ ()=>toggleDropdown(1) }><i className="bi bi-journals"></i> &nbsp; Bookings <i className="bi bi-caret-down-fill float-end"></i>
           <ul className={`mainmenu-dropdown ${isDropdownActive(1) ? '' : 'd-none'}`}>
             <li> <Link to="/newbooking" className='text-decoration-none  text-white'> <i className="bi bi-journal-plus"></i> New Booking </Link> </li>
-            <li> <Link to="/bookings" className='text-decoration-none  text-white'> <i className="bi bi-journals"></i> Booking </Link> </li>
+            <li> <Link to="/bookings" className='text-decoration-none  text-white'> <i className="bi bi-journals"></i> Bookings </Link> </li>
           </ul>
         </li>
         <li className={`mainmenu ${isDropdownActive(2) ? 'active' : ''}`} onClick={ ()=>toggleDropdown(2) }> <i className="bi bi-person-lines-fill"></i> &nbsp; Clients  <i className="bi bi-caret-down-fill float-end"></i>

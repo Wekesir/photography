@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
 import { BACKEND_SERVER } from '../constants/constants'
@@ -10,19 +10,19 @@ import '../../node_modules/react-toastify/dist/ReactToastify.css'
 
 import { useDispatch } from 'react-redux'
 import { loginSuccess } from '../store/UserSlice'
-
+ 
 export default function Login() {
   
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    let loginButton = document.getElementById("loginButton")
-    let passwordInputField = document.getElementById("passwordInput")
-
     const [loginData, setLoginData] = useState({
         email: "",
         password: ""
     })
+
+    const [isLoggingIn, setIsLoggingIn] = useState(false)
+    const [passwordVisible, setPasswordVisible] = useState(false) 
 
     function handleChange(event){
         const { name, value } = event.target
@@ -33,42 +33,37 @@ export default function Login() {
     }
 
     function handlePasswordToggle(){       
-        passwordInputField.type === "password" ? passwordInputField.type = "text" :  passwordInputField.type = "password"    
+        setPasswordVisible(!passwordVisible)  
     }
 
-    function handleSubmit(event){
+    async function handleSubmit(event){
         event.preventDefault()
 
-        //Disbale the submit button and activate the spinner
-        loginButton.disabled = true
-        loginButton.querySelector("span").classList.remove("d-none")
-
-        //Axios post request
-        axios.post(BACKEND_SERVER + "/auth/login.php", loginData)
-            .then((response)=>{ console.log(response)
-                
-                if (response.data?.status && response.data.status === 1){ //If the login is successful
-                  
-                    //Call the dispatch action that stores the user information in the store 
-                    dispatch( loginSuccess( response.data.user ) )
-
-                    //set the jwt token inside a cookie 
-                    Cookies.set('authJWTToken', response.data.jwt, { expires: 1, secure: false, sameSite: 'strict' }) //Expires in one day 
-
-                    navigate("/projects")
-                } else {
-                    notify(response.data.msg) 
-                }
-            }).catch((error) => {
-                notify(error)
-
-                //Reset the form Data
-                setLoginData({email:"", password:""})     
-            });
-
-            //Enable the submit button and hide the spinner 
-            loginButton.disabled = false
-            loginButton.querySelector("span").classList.add("d-none")
+        setIsLoggingIn(true)
+    
+        try {
+            // Axios post request
+            const response = await axios.post(BACKEND_SERVER + "/auth/login.php", loginData);  console.log(response.data);
+                    
+            if (response.data?.status && response.data.status === 1){ // If the login is successful
+                // Call the dispatch action that stores the user information in the store 
+                dispatch( loginSuccess( response.data.user ) )
+    
+                // Set the jwt token inside a cookie 
+                Cookies.set('authJWTToken', response.data.jwt, { expires: 1, secure: false, sameSite: 'strict' }) // Expires in one day 
+    
+                navigate("/projects")
+            } else {
+                notify(response.data.msg) 
+            }
+        } catch(error) {
+            notify(error)
+            // Reset the form Data
+            setLoginData({email:"", password:""})     
+        } finally {
+            // Enable the submit button and hide the spinner 
+            setIsLoggingIn(false)
+        }
     }
 
     function notify(message){
@@ -87,7 +82,7 @@ export default function Login() {
                 </div>
                 <div className="mb-3">
                     <label htmlFor="exampleInputPassword1" className="form-label text-white">PASSWORD</label>
-                    <input type="password" name='password' className="form-control bg-dark text-white border border-secondary" required="required" value={ loginData.password } onChange={ handleChange } id="passwordInput" />
+                    <input type={passwordVisible ? "text" : "password"} name='password' className="form-control bg-dark text-white border border-secondary" required="required" value={ loginData.password } onChange={ handleChange } id="passwordInput" />
                 </div>
                 <div className="mb-3 form-check">
                     <input type="checkbox" onChange={ handlePasswordToggle } className="form-check-input" id="exampleCheck1" />
@@ -95,7 +90,10 @@ export default function Login() {
                     <small className="float-end" title="Click to reset your password."><Link to='/resetpassword' className='link-info'>Reset password.</Link></small>
                 </div>
                 <div className="d-grid gap-2">
-                    <button type="submit" className="btn btn-primary" id="loginButton" title="Click to sign in.">  <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> Sign In</button>
+                    <button type="submit" className="btn btn-primary" title="Click to sign in." disabled = {isLoggingIn} >  
+                        { isLoggingIn ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                         : "Sign In"}
+                    </button>
                 </div>
             </form>
             <div className="bg-dark mt-2">

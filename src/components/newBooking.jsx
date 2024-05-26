@@ -7,19 +7,27 @@ import '../../node_modules/react-toastify/dist/ReactToastify.css'
 export default function newBooking() {
 
     const [formData, setFormData] = useState({})
+    const [newBookingLoading, setNewBookingLoading] = useState(false);
 
-    function handleSubmit(e) {
+    const handleSubmit = async (e) => {
         e.preventDefault()
+        setNewBookingLoading(!newBookingLoading)
         
-        axios.post(BACKEND_SERVER + "/bookings/new-booking.php", formData)
-            .then((response)=> { console.log(response.data)
+        try {            
+            const response = await axios.post(BACKEND_SERVER + "/bookings/new-booking.php", formData)
 
-            })
-            .catch((error) => {
-                notify("Error: " + error)
-            })
+            if(response.data?.status && response.data.status == 1) { //Success 
+                notify(response.data.msg) //Success message
+            } else {
+                notify(response.data.msg); //Error message from server
+            }
+            setNewBookingLoading(!newBookingLoading)
+        } catch (error) {
+            notify('Error: '+ error);
+        }  finally{
+            setNewBookingLoading(!newBookingLoading)
+        }        
     }
-
 
     function handleChange(e) {
         const {name, value} = e.target
@@ -37,7 +45,7 @@ export default function newBooking() {
                 <h5 className='text-white'>New Booking Details</h5> <hr className='border border-secondary' />
 
                 <div className="mb-3">
-                    <label htmlFor="name" className='text-white mb-3'>ENTER NAME</label>
+                    <label htmlFor="name" className='text-white mb-3'>NAME</label>
                     <input type="text" onChange={ handleChange } value={formData.name || ""} className='form-control text-white bg-dark border border-secondary text-uppercase' name="name" id="name" required/>
                 </div>
                 <div className="mb-3">
@@ -49,7 +57,10 @@ export default function newBooking() {
                     <input type="date" onChange={ handleChange } value={ formData.date || "" } className='form-control text-white bg-dark border border-secondary' name="date" id="date" required/>
                 </div>
                 <div className="d-grid gap-2">
-                    <button type='submit' className='btn btn-primary'>Submit</button>
+                    <button type='submit' className='btn btn-primary' disabled={ newBookingLoading }>
+                        { newBookingLoading ?  <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> 
+                        : "Add new Booking" }    
+                    </button>
                 </div>
             </form>
         </div>
