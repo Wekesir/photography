@@ -16,9 +16,15 @@ const userSlice = createSlice({
             state.userDetails = [];
             state.isAunthenticated = false;
         }, 
+        updateProfilePicture : (state, action) => {
+            state.userDetails.image = action.payload
+        },
+        removeProfilePicture : (state) => {
+            state.userDetails.image = ""; //Sets the image string to an empty string 
+        },
     }
 })
 
-export const { loginSuccess, logOut } = userSlice.actions
+export const { loginSuccess, logOut, updateProfilePicture, removeProfilePicture } = userSlice.actions
 
 export default userSlice.reducer

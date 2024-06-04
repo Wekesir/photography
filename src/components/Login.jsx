@@ -43,7 +43,7 @@ export default function Login() {
     
         try {
             // Axios post request
-            const response = await axios.post(BACKEND_SERVER + "/auth/login.php", loginData);  console.log(response.data);
+            const response = await axios.post(BACKEND_SERVER + "/auth/login.php", loginData);
                     
             if (response.data?.status && response.data.status === 1){ // If the login is successful
                 // Call the dispatch action that stores the user information in the store 

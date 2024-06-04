@@ -138,9 +138,9 @@ export default function Sidenav() {
 
         const response = await axios.get(BACKEND_SERVER + "/projects/fetch-projects.php", {
           headers : {
-            Authorization : `Bearer : ${jwtToken}`
+            Authorization : `Bearer ${jwtToken}`
           }
-        }); console.log(response)    
+        }); 
     
         if(response.data?.status && response.data.status == 0){ //When there is an error trying to fetch existing folders
           notify(response.data.msg)
