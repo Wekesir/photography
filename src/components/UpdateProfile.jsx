@@ -80,7 +80,7 @@ export default function UpdateProfile() {
 
         dispatch( updateProfilePicture(profileImage) )
       } else { //Error message 
-        notify( response.data.msg )
+        throw new Error( response.data.msg )
       }
 
     } catch ( error ) {
