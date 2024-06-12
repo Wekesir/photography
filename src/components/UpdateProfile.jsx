@@ -48,7 +48,7 @@ export default function UpdateProfile() {
         notify( response.data.msg );
 
       } else {
-        notify(response.data.msg) //Error message from the server 
+        throw new Error( response.data.msg ) //Error message from the server 
       }
       
     } catch (error) {
@@ -79,6 +79,7 @@ export default function UpdateProfile() {
         const profileImage = response.data.img; // This is thee new profile image 
 
         dispatch( updateProfilePicture(profileImage) )
+        
       } else { //Error message 
         throw new Error( response.data.msg )
       }
@@ -136,9 +137,9 @@ function notify(message){
           
           <h4 className="text-white">Update Profile</h4> <hr className="border border-secondary" />
 
-          <img src={ BACKEND_SERVER + "/assets/profile/" + image ?? logo } className='d-block rounded mx-auto mb-2' alt="logo" style={{height: '120px'}}/>
+          <img src={ image ? BACKEND_SERVER + "/assets/profile/" + image : logo } className='d-block rounded mx-auto mb-2' alt="logo" style={{height: '120px'}}/>
 
-          <div className="row mb-2">
+          <div className="row mb-3">
             <div className="col-md-6">
               <button className="btn btn-primary btn-md w-100" onClick={ handleClickFileInput } disabled={ profilePhotoUpdating } title="Click to change your profile picture.">
                 { profilePhotoUpdating && (
@@ -148,7 +149,7 @@ function notify(message){
               </button>
             </div>
             <div className="col-md-6">
-              <button className="btn btn-secondary btn-md w-100" onClick={ handleRemoveProfileImage } title="Click to remove your profile picture." >Remove profile Picture</button>
+              <button className="btn btn-secondary btn-md w-100" onClick={ handleRemoveProfileImage } title="Click to remove your profile picture." disabled={ image == "" ? "true" : "false" } >Remove profile Picture</button>
             </div>
             <input type="file" className='d-none' ref={ imageInput } accept='image/*' onChange={ handleChangeProfilePicture } name="profileImageinput" id="profileImageinput" />
           </div>

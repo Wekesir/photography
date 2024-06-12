@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { BACKEND_SERVER } from '../constants/constants'
 
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
@@ -11,63 +12,65 @@ export default function ResetPassword() {
         email : '',
         resetCode : ''
     });
+    const [submitBtnLoading, setSubmitBtnLoading] = false;
 
     const navigate = useNavigate();
 
     const resetPasswordInputDiv = document.querySelector('#resetPasswordInputDiv');
-    const submitButton = document.querySelector("#resetCodeSubmitButton");
 
     //When both the email and the code have been submitted
-    function handleSubmit(event){
+    async function handleSubmit(event){
         event.preventDefault();
-
-        submitButton.setAttribute("disabled", true)
-        submitButton.querySelector("span").classList.remove("d-none")
-
-        axios.post("http://localhost:80/photography_api/passwordReset/sendNewPassword.php", resetFormData)
-            .then(response => {
-                console.log(response.data)            
-               
-                if(response.data?.status && response.data.status == 1){
-                    setTimeout(() => { //Create a delay for the notification display 
-                        navigate("/login");
-                    }, 2000);                   
-                } 
-                //Display success message
-                notify(response.data.msg)
-            })
-            .catch(error =>{
-                notify(error)
-            })
+        try {
+            
+            setSubmitBtnLoading( !submitBtnLoading )
+    
+            const response = await axios.post(BACKEND_SERVER + "/passwordReset/sendNewPassword.php", resetFormData)                     
+                   
+            if(response.data?.status && response.data.status == 1){
+                setTimeout(() => { //Create a delay for the notification display 
+                    navigate("/login");
+                }, 2000);                   
+            } else {
+                throw new Error(response.data.msg)
+            }              
         
-        submitButton.removeAttribute("disabled")
-        submitButton.querySelector("span").classList.add("d-none")
+        } catch (error) {
+
+            notify(error)
+
+        } finally {
+
+            setSubmitBtnLoading( !submitBtnLoading )
+
+        }              
         
     }
 
-    function sendEmailForReset(){
-        //toggle the spinner and deactivate the submit button
-        submitButton.setAttribute("disabled", true)
-        submitButton.querySelector("span").classList.remove("d-none")
+    async function sendEmailForReset(){
+        try {
+            
+            setSubmitBtnLoading( !submitBtnLoading )
+    
+            const response = await axios.post(BACKEND_SERVER + "/passwordReset/sendPasswordResetCode.php", resetFormData)                 
+                   
+            if(response.data?.status && response.data.status == 1){
+                //Make visible the code input div
+                resetPasswordInputDiv.classList.remove("d-none")  
+            } else {
+                throw new Error(response.data.msg)
+            }
 
-        axios.post("http://localhost:80/photography_api/passwordReset/sendPasswordResetCode.php", resetFormData)
-            .then(response => {
-                console.log(response.data)            
-               
-                if(response.data?.status && response.data.status == 1){
-                    //Make visible the code input div
-                    resetPasswordInputDiv.classList.remove("d-none")  
-                } 
+        } catch (error) {
 
-                //Display success message
-                notify(response.data.msg)
-            })
-            .catch(error =>{
-                notify(error)
-            })
+            notify(error)
+            
+        } finally {
 
-            submitButton.removeAttribute("disabled")
-            submitButton.querySelector("span").classList.add("d-none")
+           setSubmitBtnLoading( !submitBtnLoading )
+
+        }          
+
     }
 
     function handleChange(event){
@@ -93,8 +96,10 @@ export default function ResetPassword() {
                     <input type="number" name='resetCode' className="form-control bg-dark text-white border border-secondary" value={ resetFormData.resetCode } onChange={ handleChange } id="resetCodeInput" required={ resetFormData.resetCode !== "" } />
                 </div>                
                 <div className="d-grid gap-2">
-                    <button type={ resetFormData.resetCode !== "" ? "submit" : "button" } onClick={ (e)=>(resetFormData.resetCode === "" ? sendEmailForReset() : handleSubmit(e)) } className="btn btn-primary" id="resetCodeSubmitButton" title="Click to send password reset code.">  
-                        <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> 
+                    <button type={ resetFormData.resetCode !== "" ? "submit" : "button" } onClick={ (e)=>(resetFormData.resetCode === "" ? sendEmailForReset() : handleSubmit(e)) } className="btn btn-primary" id="resetCodeSubmitButton" disabled={ submitBtnLoading } title="Click to send password reset code.">  
+                        { submitBtnLoading && (
+                              <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> 
+                        ) }                      
                         Send Code
                     </button>
                 </div>
