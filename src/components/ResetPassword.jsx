@@ -12,7 +12,7 @@ export default function ResetPassword() {
         email : '',
         resetCode : ''
     });
-    const [submitBtnLoading, setSubmitBtnLoading] = false;
+    const [submitBtnLoading, setSubmitBtnLoading] = useState(false);
 
     const navigate = useNavigate();
 
