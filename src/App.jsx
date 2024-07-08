@@ -34,17 +34,20 @@ function App() {
             <Route index element={ <Index /> }></Route>
             <Route path="/login" element={ <LoginPage /> }></Route> 
             <Route path='/signup' element={ <SignUpPage /> }></Route>
-            <Route path='/resetpassword' element={ <ResetPasswordPage/> }></Route>           
-            <Route path='/home' element={  <ProtectedRoutes> <HomePage/> </ProtectedRoutes> }></Route>
-            <Route path="/newClient" element={  <ProtectedRoutes> <AddClients /> </ProtectedRoutes> }></Route>
-            <Route path="/clients" element={  <ProtectedRoutes> <ClientsList /> </ProtectedRoutes> }></Route>
-            <Route path="/projects" element={  <ProtectedRoutes> <ProjectsPage /> </ProtectedRoutes> }></Route>
-            <Route path="/proj/:id/:folder" element={ <ProtectedRoutes> <ProjectDetailsPage /> </ProtectedRoutes> }></Route>
-            <Route path="/clientAuth" element={ <ProtectedRoutes> <ClientPortalAuth /> </ProtectedRoutes> }></Route>
-            <Route path="/clienthomepage" element={ <ProtectedRoutes> <ClientHomepagePage /> </ProtectedRoutes> }></Route>
-            <Route path="/newbooking" element={ <ProtectedRoutes> <NewBookingsPage /> </ProtectedRoutes> }></Route> 
-            <Route path="/updateprofile" element={ <ProtectedRoutes> <ProfilePage /> </ProtectedRoutes> }></Route>      
-            <Route path="/bookings" element={ <ProtectedRoutes> <BookingsPage /> </ProtectedRoutes> }></Route>           
+            <Route path='/resetpassword' element={ <ResetPasswordPage/> }></Route>       
+
+            <Route element={ <ProtectedRoutes /> }>
+              <Route path='/home' element={  <HomePage/>  }></Route>
+              <Route path="/newClient" element={  <AddClients /> }></Route>
+              <Route path="/clients" element={  <ClientsList /> }></Route>
+              <Route path="/projects" element={ <ProjectsPage /> }></Route>
+              <Route path="/proj/:id/:folder" element={ <ProjectDetailsPage /> }></Route>
+              <Route path="/clientAuth" element={ <ClientPortalAuth /> }></Route>
+              <Route path="/clienthomepage" element={ <ClientHomepagePage /> }></Route>
+              <Route path="/newbooking" element={ <NewBookingsPage /> }></Route> 
+              <Route path="/updateprofile" element={ <ProfilePage /> }></Route>      
+              <Route path="/bookings" element={ <BookingsPage /> }></Route>           
+            </Route>
         </Route>  
     )
   );
