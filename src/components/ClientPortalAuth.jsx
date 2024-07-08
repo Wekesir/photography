@@ -9,86 +9,88 @@ import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
 import { useNavigate } from 'react-router-dom'
 
-export default function ClientPortalAuth() {
+export default function ClientPortalAuth() { 
 
     document.title = "Client Auth | Lyrics Photography"
 
     const [showCodeInput, setShowCodeInput] = useState(false)
     const [formInput, setFormInput] = useState([]) //Will hold the email and the verification code of the user 
+    const [submitLoading, setSubmitLoading] = useState(false);
     const  navigate = useNavigate()
     const { setLoggedInClientData } = useContext(ClientContext)
 
     function handleinputChange(event) {
+
         const {name, value} = event.target
+
         //update the formInput state
         setFormInput(prevFormInput => ({
             ...formInput, [name] : value
         }))
     }
 
-    function handleEmailSubmit(event) { //Sends the email to the backend server
+    async function handleEmailSubmit(event) { //Sends the email to the backend server
         event.preventDefault();
 
-        document.querySelector('span').classList.remove("d-none")
-        event.target.disabled = true
+        setSubmitLoading( !submitLoading )
 
-        //check to make sure the email has been provided
-        if (!formInput.email) {
-            notify("An email address must be provided to continue")
-        } else {
+        try {
+            //Check if the email field is empty
+            if (!formInput.email) {
+                throw new Error("An email address must be provided to continue")
+            }
 
-            axios.post(BACKEND_SERVER + "/clients/send-auth-code.php", {CLIENT_EMAIL : formInput.email})
-            .then((response) => { console.log(response.data)
+            const response = await axios.post(BACKEND_SERVER + "/clients/send-auth-code.php", {CLIENT_EMAIL : formInput.email})            
+    
+            if(response.data?.status && response.data.status == 1) { //Success
 
-                if(response.data?.status && response.data.status == 1) { //Success
-                    setShowCodeInput(true) //make the code input visible
-                    notify(response.data.msg)
-                } else { //Error Message 
-                    notify(response.data.msg) //Display the error message 
-                }
+                setShowCodeInput(true) //make the code input visible
+                notify(response.data.msg)
 
-            })
-            .catch(error => {
-                notify("Failed to send email to server")
-            })
+            } else { //Error Message 
+                throw new Error(response.data.msg) //Display the error message 
+            }   
 
+        } catch (error) {
+            notify( error )
+        } finally {
+            setSubmitLoading( !submitLoading )
         }
 
-        document.querySelector('span').classList.add("d-none")
-        event.target.disabled = false
     }
 
-    function handleCodeSubmit(event) {
+    async function handleCodeSubmit(event) {
         event.preventDefault();
 
-        document.querySelector('span').classList.remove("d-none")
-        event.target.disabled = true
+        setSubmitLoading( !submitLoading )
 
-        //check to make sure the email and code have been provided
-        if(!formInput.email || !formInput.code){
-            notify("Please provide both an email and a verification code.")
-        }else{
+        try {
 
-            axios.post(BACKEND_SERVER + "/clients/verify-auth-code.php", formInput)
-            .then((response) => { console.log(response.data)
+            if(!formInput.email || !formInput.code){
+                throw new Error("Please provide both an email and a verification code.")
+            }
 
-                if(response.data?.status && response.data.status == 1) { //Success
-                    navigate("/clienthomepage")
-                    setLoggedInClientData(response.data.data)
-                    notify(response.data.msg)
-                } else if(response.data?.status && response.data.status == 0) { //Error Message 
-                    notify(response.data.msg) //Display the error message 
-                }
+            const response = await axios.post(BACKEND_SERVER + "/clients/verify-auth-code.php", formInput)            
+    
+            if(response.data?.status && response.data.status == 1) { //Success
 
-            })
-            .catch(error => {
-                notify("Failed to send email to server")
-            })
+                navigate("/clienthomepage")
+                setLoggedInClientData(response.data.data) 
+                notify(response.data.msg)
+
+            } else if(response.data?.status && response.data.status == 0) { //Error Message 
+
+                throw new Error(response.data.msg) //Display the error message 
+
+            }
+    
+        } catch (error) {
+            notify( error )
+        } finally {
+            
+           setSubmitLoading( !submitLoading )
 
         }
-
-        document.querySelector('span').classList.add("d-none")
-        event.target.disabled = false
     }
 
     function notify(message){
@@ -115,8 +117,10 @@ export default function ClientPortalAuth() {
                         <input type="text" name="code" id="code" onChange={handleinputChange} value={formInput.code || ""} className='form-control border border-secondary text-white bg-dark'  />
                     </div>
                     <div className="mb-3 d-grid gap-2">
-                        <button className="btn btn-secondary fw-bold" onClick={ (event)=>{ showCodeInput ? handleCodeSubmit(event) : handleEmailSubmit(event)  } }>
-                            <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> &nbsp;
+                        <button className="btn btn-secondary fw-bold" onClick={ (event)=>{ showCodeInput ? handleCodeSubmit(event) : handleEmailSubmit(event)  } } disabled= { submitLoading }>
+                            {submitLoading && (
+                                <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> &nbsp
+                            )}                            
                             Submit 
                         </button>
                     </div>

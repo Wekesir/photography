@@ -1,12 +1,28 @@
 import axios from "axios"
 import { BACKEND_SERVER } from '../constants/constants'
 
+export function clientTimeZone() {
+  /**
+   * This function returns the current user timezone automatically
+   */
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+export function formatDate(date) {
+  /**
+   * This function formats the date
+   * Takes in a date as a parameter 
+   */
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 export function getRealFileName(filepath){
     /**
      * This function captures the filepath and returns the real filename
      * Every file has a timestamp attached to it and  is separated  by an underscore. 
-     * 
      */
 
     const imageArray = filepath.split('_')

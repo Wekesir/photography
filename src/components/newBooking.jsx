@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { BACKEND_SERVER } from '../constants/constants'
+import { clientTimeZone, formatDate } from '../utils/helpers'
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
 
@@ -12,6 +13,9 @@ export default function newBooking() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setNewBookingLoading(!newBookingLoading)
+
+        //Append the client localTimeZone to the formData 
+        formData.timeZone = clientTimeZone();
         
         try {            
             const response = await axios.post(BACKEND_SERVER + "/bookings/new-booking.php", formData)
@@ -19,9 +23,8 @@ export default function newBooking() {
             if(response.data?.status && response.data.status == 1) { //Success 
                 notify(response.data.msg) //Success message
             } else {
-                notify(response.data.msg); //Error message from server
+                throw new Error(response.data.msg); //Error message from server
             }
-            setNewBookingLoading(!newBookingLoading)
         } catch (error) {
             notify('Error: '+ error);
         }  finally{
@@ -41,20 +44,44 @@ export default function newBooking() {
   return (
     <>
         <div className="container-fluid">
-            <form action="#" method="post" onSubmit={ handleSubmit } className='border border-secondary col-md-6 mx-auto col-12 p-4'>
+            <form action="#" method="post" onSubmit={ handleSubmit } className='border border-secondary col-md-9 mx-auto col-12 p-4'>
                 <h5 className='text-white'>New Booking Details</h5> <hr className='border border-secondary' />
 
-                <div className="mb-3">
-                    <label htmlFor="name" className='text-white mb-3'>NAME</label>
-                    <input type="text" onChange={ handleChange } value={formData.name || ""} className='form-control text-white bg-dark border border-secondary text-uppercase' name="name" id="name" required/>
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="name" className='text-white mb-3'>PHONE NUMBER</label>
-                    <input type="tel" onChange={ handleChange } value={ formData.phone || "" } className='form-control text-white bg-dark border border-secondary' name="phone" id="phone" required/>
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="date" className='text-white mb-3'>DATE</label>
-                    <input type="date" onChange={ handleChange } value={ formData.date || "" } className='form-control text-white bg-dark border border-secondary' name="date" id="date" required/>
+                <div className="row">
+                    <div className="col-6">
+                        <div className="mb-3">
+                            <label htmlFor="name" className='text-white mb-3'>NAME</label>
+                            <input type="text" onChange={ handleChange } value={formData.name || ""} className='form-control text-white bg-dark border border-secondary text-uppercase' name="name" id="name" required/>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="name" className='text-white mb-3'>PHONE NUMBER</label>
+                            <input type="tel" onChange={ handleChange } value={ formData.phone || "" } className='form-control text-white bg-dark border border-secondary' name="phone" id="phone" required/>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="location" className='text-white mb-3'>LOCATION</label>
+                            <input type="text" onChange={ handleChange } value={ formData.location || "" } className='form-control text-white bg-dark border border-secondary' name="location" id="location" required/>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="date" className='text-white mb-3'>DATE</label>
+                            <input type="date" min={ formatDate(new Date()) } onChange={ handleChange } value={ formData.date || "" } className='form-control text-white bg-dark border border-secondary' name="date" id="date" required/>
+                        </div>
+                    </div>
+                    <div className="col-6">                        
+                        <div className="mb-3">
+                            <label htmlFor="location" className='text-white mb-3'>AMOUNT</label>
+                            <input type="number" min="0" onChange={ handleChange } value={ formData.amount || "" } className='form-control text-white bg-dark border border-secondary' name="amount" id="amount"/>                    
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="photographer" className='text-white mb-3'>PHOTOGRAPHER NAME</label>
+                            <input type="text" onChange={ handleChange } value={ formData.photographer || "" } className='form-control text-white bg-dark border border-secondary' name="photographer" id="photographer" />
+                        </div>
+                        <div className="mb-3">
+                            <div className="form-check form-switch">
+                                <input className="form-check-input" type="checkbox" role="switch" id="reminderSwitch"required />
+                                <label className="form-check-label text-white" htmlFor="reminderSwitch">Set Reminder</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className="d-grid gap-2">
                     <button type='submit' className='btn btn-primary' disabled={ newBookingLoading }>
