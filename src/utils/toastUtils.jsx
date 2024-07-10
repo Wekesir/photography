@@ -2,9 +2,11 @@
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Configure toast settings globally
-toast.configure({
-  position: 'bottom-left', // Customize position for all toasts
+// No need for toast.configure; configure options directly here
+const CustomToastContainer = ToastContainer;
+
+CustomToastContainer.defaultProps = {
+  position: 'bottom-left', // Customize position
   autoClose: 2000, // Set the default auto-close duration
   hideProgressBar: false,
   newestOnTop: false,
@@ -15,6 +17,6 @@ toast.configure({
   pauseOnHover: true,
   theme: 'dark',
   // Add any other options you need
-});
+};
 
-export { ToastContainer, toast };
+export { CustomToastContainer, toast };
