@@ -2,29 +2,41 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { BACKEND_SERVER } from '../constants/constants'
 import { clientTimeZone, formatDate } from '../utils/helpers'
+import Cookies from 'js-cookie'
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
 
 export default function newBooking() {
 
-    const [formData, setFormData] = useState({})
+    const [formData, setFormData] = useState({});
     const [newBookingLoading, setNewBookingLoading] = useState(false);
+
+    const jwt = Cookies.get('authJWTToken'); //Auth Cookie 
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        setNewBookingLoading(!newBookingLoading)
+        setNewBookingLoading(!newBookingLoading); //Sets to true
 
         //Append the client localTimeZone to the formData 
         formData.timeZone = clientTimeZone();
         
         try {            
-            const response = await axios.post(BACKEND_SERVER + "/bookings/new-booking.php", formData)
-
+            const response = await axios.post(`${BACKEND_SERVER}/bookings/new-booking.php`, formData, {
+                headers: {
+                    'Authorization' : `Bearer ${jwt}`,
+                    'Content-Type': 'Application/json'                   
+                }
+            }); 
+            
             if(response.data?.status && response.data.status == 1) { //Success 
                 notify(response.data.msg) //Success message
+
+                //Reset the form data
+                setFormData({});
             } else {
                 throw new Error(response.data.msg); //Error message from server
             }
+
         } catch (error) {
             notify('Error: '+ error);
         }  finally{
@@ -43,7 +55,7 @@ export default function newBooking() {
 
   return (
     <>
-        <div className="container-fluid">
+        <div className="container-fluid h-100"> 
             <form action="#" method="post" onSubmit={ handleSubmit } className='border border-secondary col-md-9 mx-auto col-12 p-4'>
                 <h5 className='text-white'>New Booking Details</h5> <hr className='border border-secondary' />
 
