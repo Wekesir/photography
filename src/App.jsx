@@ -36,7 +36,7 @@ function App() {
             <Route path='/signup' element={ <SignUpPage /> }></Route>
             <Route path='/resetpassword' element={ <ResetPasswordPage/> }></Route>       
 
-            <Route element={ <ProtectedRoutes /> }>
+           
               <Route path='/home' element={  <HomePage/>  }></Route>
               <Route path="/newClient" element={  <AddClients /> }></Route>
               <Route path="/clients" element={  <ClientsList /> }></Route>
@@ -47,7 +47,7 @@ function App() {
               <Route path="/newbooking" element={ <NewBookingsPage /> }></Route> 
               <Route path="/updateprofile" element={ <ProfilePage /> }></Route>      
               <Route path="/bookings" element={ <BookingsPage /> }></Route>           
-            </Route>
+           
         </Route>  
     )
   );

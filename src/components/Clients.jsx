@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import Loading from './Loading'
+import Cookies from 'js-cookie';
 import { BACKEND_SERVER } from '../constants/constants'
 import { ToastContainer, toast } from 'react-toastify'
 import '../../node_modules/react-toastify/dist/ReactToastify.css'
@@ -10,6 +11,8 @@ export default function Clients() {
 const [clients, setClients] = useState([])
 const [isLoading, setIsLoading] = useState(true)
 
+const jwt = Cookies.get("authJWTToken")
+
 const [formData, setFormData] = useState({
     username: '',
     phoneNumber: '',
@@ -17,16 +20,42 @@ const [formData, setFormData] = useState({
     id : ''
   });
 
-useEffect(()=>{
-    axios.get(BACKEND_SERVER + "/clients/getClientsList.php")
-        .then((response)=>{
-            setIsLoading(false)
-            setClients(response.data)
-            
-        }).catch((error) => {
-            notify(error);      
+  useEffect(() => {
+    const fetchClients = async () => {
+      setIsLoading(!isLoading);
+      try {
+        const response = await axios.get(`${BACKEND_SERVER}/clients/getClientsList.php`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`
+          }
         });
-}, [])
+  
+        if (response.status === 200) {
+          setClients(response.data);
+        } else {
+          throw new Error(`Unexpected response status: ${response.status}`);
+        }
+        
+      } catch (error) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          notify(`Error: ${error.response.data.message || 'Unknown error'}`);
+        } else if (error.request) {
+          // The request was made but no response was received
+          notify('Error: No response received from server');
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          notify(`Error: ${error.message}`);
+        }
+      } finally {
+        setIsLoading(!isLoading);
+      }
+    };
+  
+    fetchClients();
+  }, []);
 
 function notify(message){
     toast(message)

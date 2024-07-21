@@ -15,6 +15,7 @@ export default function newBooking() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        
         setNewBookingLoading(!newBookingLoading); //Sets to true
 
         //Append the client localTimeZone to the formData 
