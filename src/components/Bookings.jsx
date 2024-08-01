@@ -15,6 +15,9 @@ export default function Bookings() {
     const [rescheduleLoading, setRescheduleLoading] = useState(false)
     const [rescheduleData, setRescheduleData] = useState({})
 
+    const sentinelRef = useRef();
+    const tableRef = useRef()
+
     const jwt = Cookies.get("authJWTToken")
 
     useEffect( ()=>{       
@@ -36,14 +39,17 @@ export default function Bookings() {
                     'Authorization' : `Bearer ${jwt}`,
                     'Content-Type' : 'Application/json'                   
                 }
-            })
+            }); 
 
             if(data?.status === 1) { //Success  
 
-                //Update the date in the array         
-                setBookings( prevBookings => prevBookings.map( 
-                    booking => booking.id === rescheduleData.bookingID ? {...booking, booking_date : rescheduleDateInput} : booking 
-                )) 
+                //Update the date in the array  
+                const updatedBookings = ()=> bookings.map((booking) =>
+                    booking.booking_id === rescheduleData.bookingID ? {...booking, booking_date : rescheduleData.rescheduleDateInput} : booking
+                )        
+                setBookings( updatedBookings ); 
+
+                toast(data.msg) //Displays the success message 
                 /**
                  * NOTE: The rescheduleDateInput used to update the date in the rescheduleData is the same as the ddate input name
                  *  When the input:date name changes then this will throw an error
@@ -90,7 +96,7 @@ export default function Bookings() {
                     'Authorization' : `Bearer ${jwt}`,
                     'Content-Type' : 'Application-json'
                 }
-            });
+            }); 
 
             if(data?.status === 1) { //Success 
                 setBookings( data.bookings ); 
@@ -146,14 +152,14 @@ export default function Bookings() {
 
     }
       
-    async function handleRescheduleBooking(event, bookingID) {
-        event.preventDefault()
+    function handleRescheduleBooking(event, bookingID) {
+        event.preventDefault();
 
         //Show the spinner
         event.target.querySelector("span.spinner-border").classList.remove("d-none")
 
         //Add the booking id to the reschedule data
-        setRescheduleData({...rescheduleData, bookingID : bookingID })
+        setRescheduleData({...rescheduleData, bookingID : bookingID });
 
         //Select and display the modal from DOM
         const modal = new bootstrap.Modal(document.getElementById('rescheduleModal'))
@@ -171,7 +177,7 @@ export default function Bookings() {
                 !bookings || bookings.length === 0  ? (
                     <h5 className="text-white-50">No Bookings have been found!</h5>
                 ) : (
-                    <table className="table table-striped table-sm table-dark table-hover">
+                    <table ref={ tableRef } className="table table-striped table-sm table-dark table-hover">
                     <thead>
                         <tr>
                         <th scope="col"></th>
@@ -201,13 +207,13 @@ export default function Bookings() {
                                     </button>
                                     <ul className="dropdown-menu dropdown-menu-dark">
                                         <li>
-                                            <Link className="dropdown-item" to="#" onClick={ (event)=>{handleRescheduleBooking(event, booking.id)} } title="Reschedule this booking."> 
+                                            <Link className="dropdown-item" to="#" onClick={ (event)=>{handleRescheduleBooking(event, booking.booking_id)} } title="Reschedule this booking."> 
                                             <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
                                             <i className="bi bi-journal-arrow-up"></i> Reschedule 
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link className="dropdown-item" to="#" onClick={ (event)=>{handleDeleteBooking(event, booking.id)} } title='="Delete this booking'> 
+                                            <Link className="dropdown-item" to="#" onClick={ (event)=>{handleDeleteBooking(event, booking.booking_id)} } title='="Delete this booking'> 
                                             <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
                                                 <i className="bi bi-trash"></i> Delete
                                             </Link>
@@ -219,6 +225,13 @@ export default function Bookings() {
                             )
                         ) }
                     </tbody>
+                    <tfoot>
+                        <tr>
+                        <td colSpan="8">
+                            <div ref={sentinelRef} style={{ height: '1px' }}></div>
+                        </td>
+                        </tr>
+                    </tfoot>
                     </table>                    
                 )
             }
@@ -234,7 +247,7 @@ export default function Bookings() {
                 <div className="modal-body border border-secondary">
                     <form action="#" onSubmit={handleRescheduleSubmit} method="post" id="rescheduleForm">
                         <div className="mb-3">
-                            <label for="rescheduleData" className="form-label">New Booking Date</label>
+                            <label htmlFor="rescheduleData" className="form-label">New Booking Date</label>
                             <input type="date" onChange={handleRescheduleBookingInput} value={rescheduleData.rescheduleDateInput || ""} min={ formatDate(new Date()) } className="form-control text-white bg-dark border border-secondary" id="rescheduleDateInput" name="rescheduleDateInput" required />
                         </div>
                         <button type="submit"  className="btn btn-primary btn-md" disabled={ rescheduleLoading }>

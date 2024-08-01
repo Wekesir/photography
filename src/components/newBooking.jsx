@@ -3,8 +3,7 @@ import axios from 'axios'
 import { BACKEND_SERVER } from '../constants/constants'
 import { clientTimeZone, formatDate } from '../utils/helpers'
 import Cookies from 'js-cookie'
-import { ToastContainer, toast } from 'react-toastify'
-import '../../node_modules/react-toastify/dist/ReactToastify.css'
+import { CustomToastContainer, toast } from '../utils/toastUtil'
 
 export default function newBooking() {
 
@@ -29,29 +28,25 @@ export default function newBooking() {
                 }
             }); 
             
-            if(response.data?.status && response.data.status == 1) { //Success 
-                notify(response.data.msg) //Success message
+            if(response.data?.status == 1) { //Success 
+                toast(response.data.msg) //Success message
 
                 //Reset the form data
                 setFormData({});
             } else {
-                throw new Error(response.data.msg); //Error message from server
+                throw new Error(`Caught Error: ${response.data.msg}`); //Error message from server
             }
 
         } catch (error) {
-            notify('Error: '+ error);
+            toast(`Error caught: ${error.message}` || "Unknown error");
         }  finally{
-            setNewBookingLoading(!newBookingLoading)
+            setNewBookingLoading(!newBookingLoading);
         }        
     }
 
     function handleChange(e) {
         const {name, value} = e.target
         setFormData( (prevData => ({...prevData, [name]:value})))
-    }
-
-    function notify(message){
-        toast(message)
     }
 
   return (
@@ -105,19 +100,7 @@ export default function newBooking() {
             </form>
         </div>
 
-        <ToastContainer
-            position="bottom-left"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-            transition: Bounce
-        />
+        <CustomToastContainer />
     </>
   )
 }

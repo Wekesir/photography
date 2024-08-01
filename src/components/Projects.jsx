@@ -5,8 +5,7 @@ import Cookies from 'js-cookie';
 import Loading from './Loading'
 import AddClient from './AddClient';
 
-import { ToastContainer, toast } from 'react-toastify'
-import '../../node_modules/react-toastify/dist/ReactToastify.css'
+import { CustomToastContainer, toast } from '../utils/toastUtil';
 import { BACKEND_SERVER } from '../constants/constants'
 import { handleDownloadFolder } from '../utils/helpers'
 
@@ -36,13 +35,13 @@ export default function Projects() {
                 })
             
                 if(response.data?.status && response.data.status == 0){
-                    notify(response.data.msg)
+                    toast(response.data.msg)
                 } else { 
                     setIsLoading(false)
                     setFolders( response.data.folders )  
                 }        
             } catch (error) {
-                notify('Error: ' + error)
+                toast('Caught Error: ' + error)
             }
         }
 
@@ -60,36 +59,31 @@ export default function Projects() {
                 })
 
                 if(response.data?.status && response.data.status == 0){
-                    notify(response.data.msg)
+                    toast(response.data.msg)
                 } else {
                     setClients(response.data.clients)  
                 }                       
                 
             } catch (error) {
-                notify('Error: '+ error)
+                toast('Error: '+ error)
             }
         }
 
         fetchClients();
-    }, [])
-
-    function notify(message){
-        toast(message)
-    }
+    }, [])    
 
     async function handleDelete(event, deleteId) {
         event.preventDefault();
         // Check if the folder id has been provided
         if (!deleteId) {
-            notify("The Folder Id is missing, delete action can not be executed ")
+            toast("The Folder Id is missing, delete action can not be executed ")
         } else {
-            const spinner = event.target.querySelector("span")
-            spinner.classList.toggle("d-none")
+            event.target.find("span.spinner-border").classList.toggle("d-none") //Activate the spinner
     
             try {
                 const response = await axios.post(BACKEND_SERVER + '/projects/delete-project.php', { PROJECT_ID: deleteId })
     
-                notify(response.data.msg)
+                toast(response.data.msg)
                 spinner.classList.toggle("d-none")
     
                 // if it was a success
@@ -101,8 +95,10 @@ export default function Projects() {
                         folderContainer.classList.add("d-none")
                     }
                 }
-            } catch (error) {
-                notify('Error: ' + error)
+            } catch (error) {               
+                toast('Error: ' + error)
+            } finally {
+                event.target.find("span.spinner-border").classList.toggle("d-none") //De-activate the spinner
             }
         }
     }    
@@ -137,9 +133,9 @@ export default function Projects() {
                 setFolders(newFolders)
             }
     
-            notify(response.data.msg) // Display the response message
+            toast(response.data.msg) // Display the response message
         } catch (error) {
-            notify("Error: " + error)
+            toast("Error: " + error)
         }
     
         // Hide the spinner
@@ -148,7 +144,7 @@ export default function Projects() {
     
 
     function handleOpen(e, folderDetails){
-        navigate(`/proj/${folderDetails.project_id}/${folderDetails.project_name}`)
+        navigate(`/proj/${folderDetails.project_id}/${folderDetails.project_name}`) 
     }
 
     function handleShareProject(folderDetails) {
@@ -160,14 +156,16 @@ export default function Projects() {
         projectModal.show()       
     }
 
-    function handleSelectClient(clientDetails) {
-        const newEmail = clientDetails.client_email;
+    function handleSelectClient(clientDetails) { 
+        //This function selects the clients who are supposed to receive an email for the shared folder  
+
+        const newEmail = clientDetails.client_email; 
       
         // Check if the email already exists in selectedClients
-        if (!selectedClients.includes(newEmail)) {
+        if (!selectedClients.includes(newEmail)) { 
           setSelectedClients([...selectedClients, newEmail]);
         } else {
-          notify(`Email ${newEmail} already selected.`)         
+          toast(`Email ${newEmail} already selected.`)         
         }
     }
 
@@ -176,17 +174,34 @@ export default function Projects() {
         setSelectedClients(newArr)
     }
       
-    async function handleSubmitSelectedClients() {
-    
-        if (selectedClients.length == 0) {
-            notify("No clients have been selected. Add a client and try again")
-        } else {
-            try {
-                const response = await axios.post(BACKEND_SERVER + "/projects/share-folder.php", { FOLDER: selectedShareFolder, CLIENTS: selectedClients })
-            } catch (error) {
-                notify(error)
+    async function handleSubmitSelectedClients(e) {    
+        try {
+            e.target.setAttribute("disabled", true);
+            e.target.find("span.spinner-border").classList.toggle("d-none"); //Show spinner
+
+            if (selectedClients.length == 0) {
+                throw new Error("No clients have been selected. Add a client and try again")
+            } 
+
+            const { data } = await axios.post(BACKEND_SERVER + "/projects/share-folder.php", { FOLDER: selectedShareFolder, CLIENTS: selectedClients }, {
+                headers: {
+                    'Authorization' : `Bearer ${jwt}`,
+                    'Content-Type' : 'application/json'
+                }
+            }) 
+
+            if(data?.status === 0){//Failure 
+                throw new Error( data.msg );
             }
+
+            toast(data.msg);
+        } catch (error) {
+            toast(`Caught Error: ${error}`)
+        } finally {
+            e.target.removeAttribute("disabled");
+            setSelectedClients([]) //Reset the selected clients 
         }
+      
     }
     
 
@@ -304,32 +319,30 @@ export default function Projects() {
                             </tr>
                         </thead>
                         <tbody>                       
-                        {clients.length === 0 ? (
+                        {selectedClients.length === 0 ? (
                             <tr>
                                 <td colSpan="4">No clients found.</td>
                             </tr>
                         ) : (
-                            clients.map((client, index) => (
+                            selectedClients.map((client, index) => (
                                 <tr key={index}>
                                     <th scope="row">{index + 1}</th>
-                                    <td>{client.client_name}</td>
-                                    <td>{client.client_email}</td>
+                                    <td>{client}</td>
                                     <td>
-                                        <button className="btn btn-sm btn-primary" onClick={ ()=>{handleSelectClient(client)} }>select</button>
+                                        <button className="btn btn-sm btn-secondary" onClick={ ()=>{handleRemoveSelectedClient(client)} }>Remove Client</button>
                                     </td>
                                 </tr>
                             ))
                         )}                 
                         </tbody>
                         </table>
-
                         )}
                     </div>
                 </div>
             </div>
             <div className="modal-footer border-top border-secondary">
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-primary" onClick={ handleSubmitSelectedClients }>Submit</button>
+                <button type="button" className="btn btn-primary" onClick={ handleSubmitSelectedClients }>  <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> Submit</button>
             </div>
             </div>
         </div>
@@ -357,20 +370,7 @@ export default function Projects() {
             </div>
         </div>
         </div>
-
-        <ToastContainer
-            position="bottom-left"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-            transition: Bounce
-        />
+        <CustomToastContainer />
     </>
   )
 }

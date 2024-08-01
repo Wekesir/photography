@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import '../assets/css/sidenav.css'
 import axios from 'axios'
 import { BACKEND_SERVER } from '../constants/constants'
 
-import { ToastContainer, toast } from 'react-toastify'
-import '../../node_modules/react-toastify/dist/ReactToastify.css'
+import { CustomToastContainer, toast } from '../utils/toastUtil'
 
 
 export default function Sidenav() {
@@ -14,8 +13,8 @@ export default function Sidenav() {
   const [uploadFolder, setUploadFolder] = useState("") //Holds the folder to which we'll upload the files
   const [existingFolders, setExistingFolder] = useState([]) //Holds the folders already in the db
 
-  const fileinput = document.getElementById("selectFileInput")
-  const foldersToggleDiv = document.getElementById('foldersDropdown')
+  const fileinputRef  = useRef();
+  const foldersToggleDivRef = useRef()
   const uploadingSpinner = document.querySelector("#uploadingSpinner") 
  
   const toggleDropdown = (index) => {
@@ -24,17 +23,17 @@ export default function Sidenav() {
 
   const isDropdownActive = (index) => activeDropdown === index
 
-  function handleFileInput(){  
+  function handleFileInput(){ 
    
-    if(fileinput){
+    if(fileinputRef.current){ 
       // Check if the input has the webkitdirectory and directory attributes 
 
-      if(fileinput.hasAttribute("webkitdirectory") && fileinput.hasAttribute("directory")){
-        fileinput.removeAttribute("webkitdirectory")
-        fileinput.removeAttribute("directory")
+      if(fileinputRef.current.hasAttribute("webkitdirectory") && fileinputRef.current.hasAttribute("directory")){
+        fileinputRef.current.removeAttribute("webkitdirectory")
+        fileinputRef.current.removeAttribute("directory")
       }
 
-      fileinput.click();
+      fileinputRef.current.click();
     }
   }
 
@@ -45,11 +44,11 @@ export default function Sidenav() {
      * directory for older browsers that do not support webkitdirectory
      * */
 
-    if(fileinput){
-      fileinput.setAttribute('webkitdirectory', true)
-      fileinput.setAttribute("directory",true)
+    if(fileinputRef.current){
+      fileinputRef.current.setAttribute('webkitdirectory', true)
+      fileinputRef.current.setAttribute("directory",true)
       
-      fileinput.click();
+      fileinputRef.current.click();
     }
   }
 
@@ -66,14 +65,14 @@ export default function Sidenav() {
     setUploadFolder(event.target.value)
 
     //Hide the folders toggle
-    foldersToggleDiv.classList.add("d-none") 
+    foldersToggleDivRef.current.classList.add("d-none") 
   }
 
   function handleSelectToggleFolder(event){
     setUploadFolder(event.target.value);
 
      //Hide the folders toggle
-     foldersToggleDiv.classList.add("d-none")
+     foldersToggleDivRef.current.classList.add("d-none")
   }
 
   function getFileNameExtension(filename){
@@ -81,12 +80,8 @@ export default function Sidenav() {
     return (parts.length > 1) ? parts[1].toLowerCase() : ""
   }
 
-  function notify(message){
-      toast(message);
-  }
-
   function handleToggleFoldersList(){
-    foldersToggleDiv.classList.contains("d-none") ? foldersToggleDiv.classList.remove("d-none") : foldersToggleDiv.classList.add("d-none") 
+    foldersToggleDivRef.current.classList.contains("d-none") ? foldersToggleDivRef.current.classList.remove("d-none") : foldersToggleDivRef.current.classList.add("d-none") 
   }
 
   function handleFilesSubmit(event){ //When the upload files has been clicked 
@@ -99,7 +94,7 @@ export default function Sidenav() {
     uploadingSpinner.classList.toggle("d-none") //Display the spinner
 
     if(!selectedFiles.length || !uploadFolder){
-      notify("A fodler and at least one file MUST be provided to proceed")
+      toast("A fodler and at least one file MUST be provided to proceed")
     } else { 
       //Create a formData object and append all the image files 
       const formData = new FormData()
@@ -119,10 +114,10 @@ export default function Sidenav() {
       })
       .then((res)=>{        
         
-        notify(res.data.msg)
+        toast(res.data.msg)
   
       }).catch((error) => {
-        notify(error) 
+        toast(error) 
       })
     }
 
@@ -143,12 +138,12 @@ export default function Sidenav() {
         }); 
     
         if(response.data?.status && response.data.status == 0){ //When there is an error trying to fetch existing folders
-          notify(response.data.msg)
+          toast(response.data.msg)
         } else { 
           setExistingFolder(response.data.folders) 
         }
       } catch (error) {
-        notify(error)
+        toast(error)
       } 
     }
 
@@ -177,7 +172,7 @@ export default function Sidenav() {
             <li className="my-0" onClick={ handleFileInput }><Link className="dropdown-item" to="#"><i className="bi bi-file-earmark-arrow-up-fill"></i> &nbsp;  Upload new File(s)</Link></li>
             <li className="my-0" onClick={ handleFolderInput }><Link className="dropdown-item" to="#"><i className="bi bi-folder-fill"></i> &nbsp; Upload new folder</Link></li>
           </ul>
-          <input type="file" className="d-none" id="selectFileInput" onChange={ handleSelectedFiles } accept='image/*, video/*' multiple/>
+          <input type="file" className="d-none" ref ={fileinputRef} onChange={ handleSelectedFiles } accept='image/*, video/*' multiple/>
       </div>
       <ul className="my-4 ps-1">
         <li className={`mainmenu ${isDropdownActive(0) ? 'active' : ''}`} onClick={ ()=>toggleDropdown(0) }><i className="bi bi-folder-fill"></i> &nbsp;  <Link to="/projects" className="text-decoration-none text-white">Projects</Link> </li>
@@ -215,7 +210,7 @@ export default function Sidenav() {
                 <input type="text" name="foldername" id="foldername" onChange={ handleUploadFolderInput } value={ uploadFolder } className="form-control me-2 bg-dark text-white text-uppercase border border-secondary" />
                 <button className="btn btn-secondary" type="button" id="button-addon2" onClick={ handleToggleFoldersList }><i className="bi bi-folder-plus"></i> &nbsp; Choose existing folder</button>
             </div>
-            <div className="mb-4 mt-2 d-none" id="foldersDropdown">    
+            <div className="mb-4 mt-2 d-none" ref={foldersToggleDivRef}>    
                 <label className="text-info mb-2">Select from folder list</label>        
                 <select className="form-select me-2 bg-dark text-white border border-secondary" onChange={ handleSelectToggleFolder } aria-label="Default select example">
                   <option value=""></option>
@@ -258,21 +253,7 @@ export default function Sidenav() {
           </div>
         </div>
       </div>
-
-      <ToastContainer
-            position="bottom-left"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-            transition: Bounce
-        />
-
+      <CustomToastContainer />
     </div> 
   )
 }
