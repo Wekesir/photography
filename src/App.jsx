@@ -6,7 +6,8 @@ import UserContext from './contexts/UserContext'
 import ClientContext from './contexts/ClientsContext'
 
 //Protected Route 
-import ProtectedRoutes from './components/ProtectedRoutes'
+import LoginProtectedRoute from './protectedRoutes/ProtectedLogin'
+import ClientAccessRoute from './protectedRoutes/ProtectedClientAccess'
 
 //Components
 import LoginPage from './pages/LoginPage'
