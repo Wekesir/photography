@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { CustomToastContainer, toast } from '../utils/toastUtil'
 import { getRealFileName } from '../utils/helpers'
 import Loading from './Loading'
+import { useNavigate } from 'react-router-dom'
 
 export default function ClientsHomepage() {
   const [isFetchingProject, setIsFetchingProject] = useState(true)
@@ -12,11 +13,13 @@ export default function ClientsHomepage() {
 
   const {folder} = useSelector(state => state.client)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   //Before the window closes, make sure to update the store state 
   window.addEventListener("beforeUnload", (e)=>{
     if(confirm("You are about to be signed out.")) {
       dispatch(unsetFolderID());
+      navigate("/")
     }
   })
 
