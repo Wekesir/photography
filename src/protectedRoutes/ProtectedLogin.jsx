@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux'
 
 export default function ProtectedRoutes(  ) {
 
-const { isAuthenticated, userDetails } = useSelector( (state) => state.user )
+  const { isAuthenticated, userDetails } = useSelector( (state) => state.user )
 
-  isAuthenticated && userDetails ? <Outlet/> : <Navigate to="/login" /> 
+  return isAuthenticated && userDetails ? <Outlet/> : <Navigate to="/login" replace/> 
 
 }

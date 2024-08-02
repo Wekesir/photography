@@ -1,11 +1,6 @@
-import { useState } from 'react'
 import { Route, createBrowserRouter, createRoutesFromElements, Outlet, RouterProvider } from "react-router-dom"
 
-//Contexts
-import UserContext from './contexts/UserContext'
-import ClientContext from './contexts/ClientsContext'
-
-//Protected Route 
+//Protected Routes
 import LoginProtectedRoute from './protectedRoutes/ProtectedLogin'
 import ClientAccessRoute from './protectedRoutes/ProtectedClientAccess'
 
@@ -26,8 +21,6 @@ import ProfilePage from './pages/ProfilePage'
 import BookingsPage from './pages/BookingsPage'
 
 function App() {
-  const [loggedInUserData, setLoggedInUserData] = useState({});
-  const [loggedInClientData, setLoggedInClientData] = useState({})
 
   const router = createBrowserRouter( 
     createRoutesFromElements(
@@ -37,28 +30,31 @@ function App() {
             <Route path='/signup' element={ <SignUpPage /> }></Route>
             <Route path='/resetpassword' element={ <ResetPasswordPage/> }></Route>       
 
-           
+            <Route element={<LoginProtectedRoute />}>
               <Route path='/home' element={  <HomePage/>  }></Route>
               <Route path="/newClient" element={  <AddClients /> }></Route>
               <Route path="/clients" element={  <ClientsList /> }></Route>
               <Route path="/projects" element={ <ProjectsPage /> }></Route>
               <Route path="/proj/:id/:folder" element={ <ProjectDetailsPage /> }></Route>
               <Route path="/clientAuth" element={ <ClientPortalAuth /> }></Route>
-              <Route path="/clienthomepage" element={ <ClientHomepagePage /> }></Route>
+              
               <Route path="/newbooking" element={ <NewBookingsPage /> }></Route> 
               <Route path="/updateprofile" element={ <ProfilePage /> }></Route>      
-              <Route path="/bookings" element={ <BookingsPage /> }></Route>           
-           
+              <Route path="/bookings" element={ <BookingsPage /> }></Route>   
+            </Route>
+
+            <Route element={<ClientAccessRoute />}>
+              <Route path="/clienthomepage" element={ <ClientHomepagePage /> }></Route>
+            </Route>
+
+              {/**Catch any other routes*/}
+              <Route path="*" element={ <Index />}></Route>     
         </Route>  
     )
   );
 
-  return (
-    <UserContext.Provider value={{ loggedInUserData, setLoggedInUserData }}> 
-      <ClientContext.Provider value={{ loggedInClientData, setLoggedInClientData }}>        
-        <div> <RouterProvider router={ router }/> </div>
-      </ClientContext.Provider>
-    </UserContext.Provider> 
+  return (      
+    <div> <RouterProvider router={ router }/> </div>
   )
 }
 
