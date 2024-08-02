@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { BACKEND_SERVER } from '../constants/constants'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { CustomToastContainer, toast } from '../utils/toastUtil'
+import { getRealFileName } from '../utils/helpers'
 import Loading from './Loading'
 
 export default function ClientsHomepage() {
@@ -10,6 +11,14 @@ export default function ClientsHomepage() {
   const [folderFiles, setFolderFiles] = useState([])
 
   const {folder} = useSelector(state => state.client)
+  const dispatch = useDispatch()
+
+  //Before the window closes, make sure to update the store state 
+  window.addEventListener("beforeUnload", (e)=>{
+    if(confirm("You are about to be signed out.")) {
+      dispatch(unsetFolderID());
+    }
+  })
 
   useEffect(()=>{
     const fetchProject = async ()=>{
@@ -18,13 +27,13 @@ export default function ClientsHomepage() {
           throw new Error(`Folder ID error`)
         }
 
-        const response = await axios.get(`${BACKEND_SERVER}/api/projects`);
+        const {data} = await axios.post(`${BACKEND_SERVER}/clients/fetchFolderFiles.php`, folder);
 
-        if(response?.data.status === 0){ //Error returned 
+        if(data?.status === 0){ //Error returned 
           throw new Error(`Caught Error: ${data.msg}`)
         }
 
-        setFolderFiles(folderFiles)
+        setFolderFiles(data.files)
       } catch (error) {
         toast(`Caught Error: ${error.message}`);
       } finally {
@@ -47,9 +56,9 @@ export default function ClientsHomepage() {
                   {folderFiles.map((file, index)=>(
                     <div className="col-md-3 col-sm-6" key={index}>
                     <div className="card borer border-secondary">
-                      <img src="..." style={{height:'180px'}} className="card-img-top object-fit-contain" alt="..." />
+                      <img src={ BACKEND_SERVER + `/assets/img/${file.filename}` } style={{height:'180px'}} className="card-img-top object-fit-contain" alt="..." />
                       <div className="card-body">
-                        <h5 class="card-title placeholder text-truncate">Card title</h5>
+                        <h5 class="card-title placeholder text-truncate"> { getRealFileName(file.filename) } </h5>
                         <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                       </div>
                     </div>

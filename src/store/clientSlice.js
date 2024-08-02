@@ -9,8 +9,11 @@ const ClientSlice = createSlice({
     reducers : {
         setFolderID : (state, action) => {
             state.folder = action.payload
+        },
+        unsetFolderID : (state) => { //Remove the folder ID
+            state.folder = ''
         }
     }
 })
-export const {folderAccessDetails} = ClientSlice.actions 
+export const {folderAccessDetails, unsetFolderID} = ClientSlice.actions 
 export default ClientSlice.reducer;

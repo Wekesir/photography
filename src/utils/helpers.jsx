@@ -25,12 +25,12 @@ export function getRealFileName(filepath){
      * Every file has a timestamp attached to it and  is separated  by an underscore. 
      */
 
-    const imageArray = filepath.split('_')
+    const fileArray = filepath.split('_')
 
     //remove timestamp
-    imageArray.shift()
+    fileArray.shift()
 
-    return imageArray.join("_")
+    return fileArray.join("_")
 }
 
 export function handleDownloadFile(fileInfo) {
