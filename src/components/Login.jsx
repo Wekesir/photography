@@ -1,20 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
 import { BACKEND_SERVER } from '../constants/constants'
 import logo from '../assets/logo.png'
 import Cookies  from "js-cookie"
 
-import { ToastContainer, toast } from 'react-toastify'
-import '../../node_modules/react-toastify/dist/ReactToastify.css'
+import { CustomToastContainer, toast } from '../utils/toastUtil'
 
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { loginSuccess } from '../store/UserSlice'
  
 export default function Login() {
   
     const navigate = useNavigate()
     const dispatch = useDispatch()
+
+    const { isAunthenticated, userDetails} = useSelector( (state)=>state.user )
 
     const [loginData, setLoginData] = useState({
         email: "",
@@ -37,27 +38,26 @@ export default function Login() {
     }
 
     async function handleSubmit(event){
-        event.preventDefault()
+        event.preventDefault(); 
 
         setIsLoggingIn(true)
     
         try {
             // Axios post request
-            const response = await axios.post(BACKEND_SERVER + "/auth/login.php", loginData);
+            const response = await axios.post(`${BACKEND_SERVER}/auth/login.php`, loginData);
                     
-            if (response.data?.status && response.data.status === 1){ // If the login is successful
+            if (response.data?.status === 1){ // If the login is successful
                 // Call the dispatch action that stores the user information in the store 
                 dispatch( loginSuccess( response.data.user ) )
     
                 // Set the jwt token inside a cookie 
                 Cookies.set('authJWTToken', response.data.jwt, { expires: 1, secure: false, sameSite: 'strict' }) // Expires in one day 
     
-                navigate("/projects")
             } else {
-                notify(response.data.msg) 
+                toast(response.data.msg) 
             }
         } catch(error) {
-            notify(error)
+            toast(`Caught Error: ${error.message}`)
             // Reset the form Data
             setLoginData({email:"", password:""})     
         } finally {
@@ -66,11 +66,14 @@ export default function Login() {
         }
     }
 
-    function notify(message){
-        toast(message)
-    }
-
-  return (
+    useEffect(()=>{
+        // If the user is authenticated and they have details, navigate to the projects page
+        if (isAunthenticated && Object.keys(userDetails).length > 0) {
+            navigate("/projects")
+        }
+    }, [userDetails])
+    
+  return ( 
     <div className="container-fluid">
         <div className='p-3 col-md-4 col-12 mx-auto border-start border-warning' style={{ backgroundColor : 'rgba(0,0,0,0.3)' }}>
             <img src={logo} className='d-block rounded mx-auto mb-2' alt="logo" style={{height: '100px'}}/>
@@ -100,20 +103,7 @@ export default function Login() {
                 <small className='text-white'>Don't have an account? <Link to='/signup' className='link-info link-underline-opacity-75-hover'>Sign up.</Link></small>
             </div>
         </div>
-
-        <ToastContainer
-            position="bottom-left"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-            transition: Bounce
-        />
+        <CustomToastContainer />
     </div>
   )
 }
