@@ -6,6 +6,6 @@ export default function ProtectedRoutes(  ) {
 
   const { isAuthenticated, userDetails } = useSelector( (state) => state.user )
 
-  return isAuthenticated && userDetails ? <Outlet/> : <Navigate to="/login" replace/> 
+  return isAuthenticated && userDetails.length > 0 ? <Outlet/> : <Navigate to="/login" replace/> 
 
 }

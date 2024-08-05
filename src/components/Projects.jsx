@@ -27,7 +27,7 @@ export default function Projects() {
         const fetchProjects = async () => {
             try {
                 
-                const response = await axios.get(BACKEND_SERVER + "/projects/fetch-projects.php", {
+                const response = await axios.get(`${BACKEND_SERVER}/projects/fetch-projects.php`, {
                     headers : {
                     'Authorization' : `Bearer ${jwt}`, 
                     'Content-Type' : 'Application/json'
@@ -41,7 +41,7 @@ export default function Projects() {
                     setFolders( response.data.folders )  
                 }        
             } catch (error) {
-                toast('Caught Error: ' + error)
+                toast(`Caught Error: ${error.message}`)
             }
         }
 
@@ -58,14 +58,14 @@ export default function Projects() {
                     }
                 })
 
-                if(response.data?.status && response.data.status == 0){
+                if(response.data?.status == 0){
                     toast(response.data.msg)
                 } else {
                     setClients(response.data.clients)  
                 }                       
                 
             } catch (error) {
-                toast('Error: '+ error)
+                toast(`Caught Error: ${error.message}`)
             }
         }
 
@@ -78,7 +78,7 @@ export default function Projects() {
         if (!deleteId) {
             toast("The Folder Id is missing, delete action can not be executed ")
         } else {
-            event.target.find("span.spinner-border").classList.toggle("d-none") //Activate the spinner
+            event.target.querySelector("span.spinner-border").classList.toggle("d-none") //Activate the spinner
     
             try {
                 const response = await axios.post(BACKEND_SERVER + '/projects/delete-project.php', { PROJECT_ID: deleteId })
@@ -96,9 +96,9 @@ export default function Projects() {
                     }
                 }
             } catch (error) {               
-                toast('Error: ' + error)
+                toast(`Caught Error: ${error.message}`)
             } finally {
-                event.target.find("span.spinner-border").classList.toggle("d-none") //De-activate the spinner
+                event.target.querySelector("span.spinner-border").classList.toggle("d-none") //De-activate the spinner
             }
         }
     }    
@@ -135,7 +135,7 @@ export default function Projects() {
     
             toast(response.data.msg) // Display the response message
         } catch (error) {
-            toast("Error: " + error)
+            toast(`Caught Error: ${error.message}`)
         }
     
         // Hide the spinner
@@ -175,15 +175,15 @@ export default function Projects() {
     }
       
     async function handleSubmitSelectedClients(e) {    
-        try {
+        try { 
             e.target.setAttribute("disabled", true);
-            e.target.find("span.spinner-border").classList.toggle("d-none"); //Show spinner
+            e.target.querySelector("span.spinner-border").classList.remove("d-none"); //Show spinner
 
             if (selectedClients.length == 0) {
                 throw new Error("No clients have been selected. Add a client and try again")
             } 
 
-            const { data } = await axios.post(BACKEND_SERVER + "/projects/share-folder.php", { FOLDER: selectedShareFolder, CLIENTS: selectedClients }, {
+            const { data } = await axios.post(`${BACKEND_SERVER}/projects/share-folder.php`, { FOLDER: selectedShareFolder, CLIENTS: selectedClients }, {
                 headers: {
                     'Authorization' : `Bearer ${jwt}`,
                     'Content-Type' : 'application/json'
@@ -193,20 +193,19 @@ export default function Projects() {
             if(data?.status === 0){//Failure 
                 throw new Error( data.msg );
             }
-
             toast(data.msg);
         } catch (error) {
-            toast(`Caught Error: ${error}`)
+            toast(`Caught Error: ${error.message}`)
         } finally {
             e.target.removeAttribute("disabled");
+            e.target.querySelector("span.spinner-border").classList.add("d-none"); //Hide spinner
             setSelectedClients([]) //Reset the selected clients 
         }
       
     }
-    
 
   return (
-    <>
+    <React.Fragment>
         <div className="container-fluid py-1">
             { isLoading ? (
                 <Loading />
@@ -371,6 +370,6 @@ export default function Projects() {
         </div>
         </div>
         <CustomToastContainer />
-    </>
+    </React.Fragment>
   )
 }

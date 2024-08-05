@@ -76,7 +76,9 @@ export default function Login() {
   return ( 
     <div className="container-fluid">
         <div className='p-3 col-md-4 col-12 mx-auto border-start border-warning' style={{ backgroundColor : 'rgba(0,0,0,0.3)' }}>
-            <img src={logo} className='d-block rounded mx-auto mb-2' alt="logo" style={{height: '100px'}}/>
+            <Link to="/">
+                <img src={logo} className='d-block rounded mx-auto mb-2' alt="logo" style={{height: '100px'}}/>
+            </Link>
             <h4 className="text-white text-center"> <i className="bi bi-box-arrow-in-right"></i> SIGN IN</h4> <hr className="border border-secondary" />
             <form action="#" method="POST" onSubmit={ handleSubmit }>
                 <div className="mb-3">
@@ -93,7 +95,7 @@ export default function Login() {
                     <small className="float-end" title="Click to reset your password."><Link to='/resetpassword' className='link-info'>Reset password.</Link></small>
                 </div>
                 <div className="d-grid gap-2">
-                    <button type="submit" className="btn btn-primary" title="Click to sign in." disabled = {isLoggingIn} >  
+                    <button type="submit" className="btn btn-secondary" title="Click to sign in." disabled = {isLoggingIn} >  
                         { isLoggingIn ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
                          : "Sign In"}
                     </button>

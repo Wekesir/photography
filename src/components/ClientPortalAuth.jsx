@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import MainNavbar from './MainNavbar'
 import logo from '../assets/logo.png'
 import { BACKEND_SERVER } from '../constants/constants'
@@ -7,7 +7,7 @@ import { CustomToastContainer, toast } from '../utils/toastUtil'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
-export default function ClientPortalAuth() { s
+export default function ClientPortalAuth() { 
 
     document.title = "Client Auth | Lyrics Photography"
 
@@ -22,7 +22,7 @@ export default function ClientPortalAuth() { s
 
         //update the formInput state
         setFormInput(prevFormInput => ({
-            ...formInput, [name] : value
+            ...prevFormInput, [name] : value
         }))
     }
 
@@ -37,19 +37,20 @@ export default function ClientPortalAuth() { s
                 throw new Error("Please provide both an email and a verification code.")
             }
 
-            const {data} = await axios.post(`${BACKEND_SERVER}/clients/fetchProjectId.php`, formInput)            
+            //const {data} = await axios.post(`${BACKEND_SERVER}/clients/fetchProjectId.php`, formInput); console.log(data); 
+            const {data} = await axios.post(`${BACKEND_SERVER}/clients/test.php`, formInput); console.log(data);          
     
-            if(data?.status == 1) { //Success
-                dispatch(setFolderID(data.folder))
-                navigate("/clienthomepage")               
-            } else if(data?.status == 0) { //Error Message 
-                throw new Error(data.msg) //Display the error message 
-            }     
+            // if(data?.status == 1) { //Success
+            //     dispatch(setFolderID(data.folder))
+            //     navigate("/clienthomepage")               
+            // } else if(data?.status == 0) { //Error Message 
+            //     throw new Error(data.msg) //Display the error message 
+            // }     
         } catch (error) {
             toast( `Caught error: ${error.message}` ) 
         } finally {          
             setFormInput({})
-            toast(response.data.msg)  
+           
             setSubmitLoading( !submitLoading )
         }
     }
@@ -76,7 +77,7 @@ export default function ClientPortalAuth() { s
                     <div className="mb-3 d-grid gap-2">
                         <button className="btn btn-secondary fw-bold"  disabled= { submitLoading }>
                             {submitLoading && (
-                                <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> &nbsp
+                                <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> 
                             )}                            
                             Submit 
                         </button>
