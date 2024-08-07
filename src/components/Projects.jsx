@@ -200,8 +200,7 @@ export default function Projects() {
             e.target.removeAttribute("disabled");
             e.target.querySelector("span.spinner-border").classList.add("d-none"); //Hide spinner
             setSelectedClients([]) //Reset the selected clients 
-        }
-      
+        }      
     }
 
   return (

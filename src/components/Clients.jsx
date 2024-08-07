@@ -3,8 +3,7 @@ import axios from 'axios';
 import Loading from './Loading'
 import Cookies from 'js-cookie';
 import { BACKEND_SERVER } from '../constants/constants'
-import { ToastContainer, toast } from 'react-toastify'
-import '../../node_modules/react-toastify/dist/ReactToastify.css'
+import { CustomToastContainer, toast } from '../utils/toastUtil';
 
 export default function Clients() {
     
@@ -24,42 +23,31 @@ const [formData, setFormData] = useState({
     const fetchClients = async () => {
       setIsLoading(!isLoading);
       try {
+        if(!jwt) {
+          throw new Error("JWT token could not be found!")
+        }
+
         const response = await axios.get(`${BACKEND_SERVER}/clients/getClientsList.php`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwt}`
           }
-        });
-  
+        });  
+
         if (response.status === 200) {
-          setClients(response.data);
+          setClients(response.data.clients);
         } else {
           throw new Error(`Unexpected response status: ${response.status}`);
-        }
-        
+        }        
       } catch (error) {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          notify(`Error: ${error.response.data.message || 'Unknown error'}`);
-        } else if (error.request) {
-          // The request was made but no response was received
-          notify('Error: No response received from server');
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          notify(`Error: ${error.message}`);
-        }
-      } finally {
+        toast(`Caught Error: ${error.message}` || "Unknown Message")
+      } finally { console.log(clients)
         setIsLoading(!isLoading);
       }
     };
   
     fetchClients();
   }, []);
-
-function notify(message){
-    toast(message)
-}
 
 function handleEdit(event, client){
     event.target.querySelector(".spinner-border").classList.remove("d-none") 
@@ -84,30 +72,27 @@ function handleEdit(event, client){
     event.target.removeAttribute("disabled")
 }
 
-function handleDelete(event, client){
+async function handleDelete(event, client){
+  try {
     //Display the spinner
     event.target.querySelector(".spinner-border").classList.remove("d-none")
     event.target.setAttribute("disabled", "")
 
     //send the data to the deleting php file 
-    axios.post(BACKEND_SERVER + '/clients/deleteClient.php', client)
-        .then((res) => {
+    const res = await axios.post(`${BACKEND_SERVER}/clients/deleteClient.php`, client)      
 
-            if (res.data.status == 1){
-                let newArr = clients.filter((item) => item !== client);
-                setClients(newArr);
-                notify(res.data.msg)
-            }else{
-                notify(res.data.msg)
-            }  
-
-            event.target.querySelector(".spinner-border").classList.add("d-none")
-            event.target.removeAttribute("disabled")
-
-        }).catch(error => {
-            notify(error)
-        })
-        
+    if (res.data?.status === 1){
+        let newArr = clients.filter((item) => item !== client);
+        setClients(newArr);       
+    } else {
+      throw new Error(res.data.msg)
+    }   
+  } catch (error) {
+    toast(`Caught Error: ${error.message}` || "Unknown error")
+  } finally {    
+    event.target.querySelector(".spinner-border").classList.add("d-none")
+    event.target.removeAttribute("disabled") 
+  }             
 }
 
 function handleChange(event){
@@ -115,56 +100,50 @@ function handleChange(event){
     setFormData({ ...formData, [name]: value });
 }
 
-function handleSubmit(e){
+async function handleSubmit(e){
     e.preventDefault();
 
-    const spinner = e.target.querySelector(".spinner-border")
-
-    spinner.classList.remove("d-none");
-
-    axios.post(BACKEND_SERVER + "/clients/editClient.php", formData)
-    .then((response)=>{
-        
-        if (response.data?.status && response.data.status === 1){
-
-             //After the update has happened, we find the  element in our array and replace it with the data
-             const clientToUpdate = clients.find((client)=> client.client_id === formData.id)
-
-             if(clientToUpdate){
-                clientToUpdate.client_name = formData.username,
-                clientToUpdate.client_phone = formData.phoneNumber,
-                clientToUpdate.client_email = formData.email
-
-                //Update the clients in object 
-                setClients([...clients]) //Triggers re-render                
-             } else {
-                notify("The client to be updated could not be found.")
-             }
-
-            notify(response.data.msg);
+    try {
+      const spinner = e.target.querySelector(".spinner-border")
+      spinner.classList.remove("d-none");
+  
+      const response = await axios.post(`${BACKEND_SERVER}/clients/editClient.php`, formData)
+          
+      if (response.data?.status === 1){  
+        //After the update has happened, we find the  element in our array and replace it with the data
+        const clientToUpdate = clients.find((client)=> client.client_id === formData.id)
+  
+        if(clientToUpdate){
+          clientToUpdate.client_name = formData.username,
+          clientToUpdate.client_phone = formData.phoneNumber,
+          clientToUpdate.client_email = formData.email
+  
+          //Update the clients in object 
+          setClients([...clients]) //Triggers re-render                
         } else {
-            notify(response.data.msg);
-        }
-    }).catch((error) => {
-            notify(error);
-
-            //Reset the form Data
-            setFormData({username: '',
-            phoneNumber: '',
-            email: ''});       
-    });
-
-    spinner.classList.add("d-none");
-
+          throw new Error("The client to be updated could not be found.")
+        } 
+  
+        toast(response.data.msg);
+      } else {
+        throw new Error(response.data.msg);
+      }      
+    } catch (error) {
+      toast(`Caught Error: ${error.message}` || "Unknown error")
+    } finally {
+       //Reset the form Data
+      setFormData({username: '',
+                  phoneNumber: '',
+                  email: ''
+                }); 
+      spinner.classList.add("d-none");  
+    }   
 }
-
-
   return (
-    <>
+    <React.Fragment>
         { isLoading ? (
             <Loading />
         ) : (
-
         <table className="table table-striped table-sm table-dark table-hover">
         <thead>
             <tr>
@@ -177,7 +156,7 @@ function handleSubmit(e){
             </tr>
         </thead>
         <tbody>
-            {clients.map((client, index)=>(
+            {Array.isArray(clients) && clients.map((client, index)=> (
                 <tr key={index}>
                     <th scope="row">{index + 1}</th>
                     <td className='text-center'><i className="bi bi-person-circle"></i></td>
@@ -189,12 +168,10 @@ function handleSubmit(e){
                         <button className="btn btn-sm btn-secondary" title="Click to delete client." onClick={ (event)=>handleDelete(event, client) }><i className="bi bi-trash3-fill"></i> delete  <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span></button>
                     </td>
                 </tr>
-            ))}               
-           
+            ))}           
         </tbody>
         </table>
         )}
-
         
         <div className="modal fade" id="editUsermodal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
@@ -228,20 +205,7 @@ function handleSubmit(e){
             </div>
         </div>
         </div>
-
-        <ToastContainer
-            position="bottom-left"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-            transition: Bounce
-        />
-    </>
+        <CustomToastContainer />
+    </React.Fragment>
   )
 }

@@ -43,9 +43,9 @@ function App() {
               <Route path="/bookings" element={ <BookingsPage /> }></Route>   
             {/* </Route> */}
 
-            <Route element={<ClientAccessRoute />}>
+            {/* <Route element={<ClientAccessRoute />}> */}
               <Route path="/clienthomepage" element={ <ClientHomepagePage /> }></Route>
-            </Route>
+            {/* </Route> */}
 
               {/**Catch any other routes*/}
               <Route path="*" element={ <Index />}></Route>     

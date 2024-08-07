@@ -2,9 +2,7 @@ import React, { useState, useRef } from 'react'
 import { BACKEND_SERVER } from '../constants/constants';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-
-import { ToastContainer, toast } from 'react-toastify'
-import '../../node_modules/react-toastify/dist/ReactToastify.css'
+import { CustomToastContainer } from '../utils/toastUtil';
 import { useDispatch, useSelector } from 'react-redux'
 import { updateProfilePicture, removeProfilePicture, loginSuccess } from '../store/UserSlice'
 import logo from '../assets/logo.png'
@@ -30,29 +28,26 @@ export default function UpdateProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
-
     setProfileUpdating(!profileUpdating); 
 
     try {      
-      const response =  await axios.post(BACKEND_SERVER + "/users/updateProfile.php", profileInfo, {
+      const response =  await axios.post(`${BACKEND_SERVER}/users/updateProfile.php`, profileInfo, {
         headers : {
           'Authorization' : `Bearer ${jwt}`,
           'Content-Type' : "Application-json"
         }
       })
 
-      if(response.data?.status && response.data.status == 1) { //Success
+      if(response.data?.status == 1) { //Success
 
         //Update the Redux state for the user slice 
         dispatch( loginSuccess( response.data.user ) )
-        notify( response.data.msg );
-
+        toast( response.data.msg );
       } else {
         throw new Error( response.data.msg ) //Error message from the server 
-      }
-      
+      }      
     } catch (error) {
-      notify("Error " + error)
+      toast(`Caught Error: ${error.message}` || 'Unknown error trying to update profile.')
     } finally {
       setProfileUpdating(!profileUpdating) 
     }
@@ -68,24 +63,22 @@ export default function UpdateProfile() {
 
       formData.append("profileImage", profileImage)
 
-      const response = await axios.post( BACKEND_SERVER + "/users/update_profile_pic.php", formData, {
+      const response = await axios.post( `${BACKEND_SERVER}/users/update_profile_pic.php`, formData, {
         headers : {
           Authorization : `Bearer ${jwt}`,
           "Content-Type" : "multipart/form-data" 
         }
       })
 
-      if( response.data?.status && response.data.status == 1 ) { //Successfully updated 
+      if( response.data?.status == 1 ) { //Successfully updated 
         const profileImage = response.data.img; // This is thee new profile image 
-
         dispatch( updateProfilePicture(profileImage) )
         
       } else { //Error message 
         throw new Error( response.data.msg )
       }
-
     } catch ( error ) {
-      notify( error )
+      toast( `Caught Error: ${eror.message}` || 'Unknown error trying to change profile picture.' )
     } finally {
       setProfilePhotoUpdating(!profilePhotoUpdating)
     }
@@ -106,29 +99,25 @@ export default function UpdateProfile() {
     try{
       setRemovingProflePic(!removingProflePic)
 
-      const response = await axios.post(BACKEND_SERVER + "/users/deleteProfilePic.php", {
+      const response = await axios.post(`${BACKEND_SERVER}/users/deleteProfilePic.php`, {
         headers : {
           "Authorization" : `Bearer ${jwt}`,
           'Content-Type'  : "Application-json"
         }
       })
 
-      if( response.data?.status && response.data.status == 1 ){
+      if( response.data?.status  == 1 ){
         dispatch( removeProfilePicture() )
       } else {
         throw new Error( response.data.msg )
       }
 
     }catch( error ) {
-      notify( error )
+      toast(`Caught error: ${error.message}` || 'Unknown error trying to delete profile image')
     } finally {
       setRemovingProflePic(!removingProflePic)
     }
   }
-
-function notify(message){
-  toast(message)
-}
 
   return (
     <>    
@@ -169,7 +158,7 @@ function notify(message){
                       <input type="email" name="email" className="form-control bg-dark text-white text-lowercase border border-secondary" value={ profileInfo.email }  onChange={ handleChange } id="exampleInputEmail1" required="required" aria-describedby="emailHelp" />
                   </div>
                   <div className="d-grid gap-2">
-                    <button type="submit" className="btn btn-primary" title="Click to update your profile" disabled={ profileUpdating }>
+                    <button type="submit" className="btn btn-secondary" title="Click to update your profile" disabled={ profileUpdating }>
                       { profileUpdating ?  <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> 
                       : "Update Profle" }                   
                     </button>
@@ -178,19 +167,7 @@ function notify(message){
           </div> 
       </div> 
 
-      <ToastContainer
-      position="bottom-left"
-      autoClose={2000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-      theme="dark"
-      transition: Bounce
-      />
+      <CustomToastContainer />
     </>
   )
 }

@@ -15,5 +15,5 @@ const ClientSlice = createSlice({
         }
     }
 })
-export const {folderAccessDetails, unsetFolderID} = ClientSlice.actions 
+export const {setFolderID, unsetFolderID} = ClientSlice.actions 
 export default ClientSlice.reducer;

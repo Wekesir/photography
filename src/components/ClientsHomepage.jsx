@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { CustomToastContainer, toast } from '../utils/toastUtil'
 import { getRealFileName } from '../utils/helpers'
 import Loading from './Loading'
-import { useNavigate } from 'react-router-dom'
 
 export default function ClientsHomepage() {
   const [isFetchingProject, setIsFetchingProject] = useState(true)
@@ -13,15 +12,33 @@ export default function ClientsHomepage() {
 
   const {folder} = useSelector(state => state.client)
   const dispatch = useDispatch()
-  const navigate = useNavigate()
 
-  //Before the window closes, make sure to update the store state 
-  window.addEventListener("beforeUnload", (e)=>{
-    if(confirm("You are about to be signed out.")) {
-      dispatch(unsetFolderID());
-      navigate("/")
-    }
-  })
+  // useEffect(() => {
+  //   let isLeavingPage = false;
+
+  //   const handleBeforeUnload = (e) => {
+  //     if (!isLeavingPage) {
+  //       e.preventDefault();
+  //       e.returnValue = ''; //Chrome Browser
+  //       isLeavingPage = true;
+  //     }
+  //   };
+
+  //   const handleUnload = () => {
+  //     if (isLeavingPage) {
+  //       dispatch(unsetFolderID());
+  //     }
+  //   };
+
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
+  //   window.addEventListener('unload', handleUnload);
+
+  //   // Cleanup function to remove event listeners when component unmounts
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload);
+  //     window.removeEventListener('unload', handleUnload);
+  //   };
+  // }, [dispatch]); 
 
   useEffect(()=>{
     const fetchProject = async ()=>{
@@ -30,7 +47,7 @@ export default function ClientsHomepage() {
           throw new Error(`Folder ID error`)
         }
 
-        const {data} = await axios.post(`${BACKEND_SERVER}/clients/fetchFolderFiles.php`, folder);
+        const {data} = await axios.post(`${BACKEND_SERVER}/clients/fetchFolderFiles.php`, {folder: folder});
 
         if(data?.status === 0){ //Error returned 
           throw new Error(`Caught Error: ${data.msg}`)
@@ -57,12 +74,11 @@ export default function ClientsHomepage() {
             ) : (
               <div className="row">
                   {folderFiles.map((file, index)=>(
-                    <div className="col-md-3 col-sm-6" key={index}>
-                    <div className="card borer border-secondary">
-                      <img src={ BACKEND_SERVER + `/assets/img/${file.filename}` } style={{height:'180px'}} className="card-img-top object-fit-contain" alt="..." />
+                    <div className="col-md-3 col-sm-6 mb-4 bg-dark" key={index}>
+                    <div className="card borer border-secondary bg-dark">
+                      <img src={ `${BACKEND_SERVER}/assets/img/${file.filename}` } style={{height:'180px'}} className="card-img-top object-fit-contain" alt="..." />
                       <div className="card-body">
-                        <h5 class="card-title placeholder text-truncate"> { getRealFileName(file.filename) } </h5>
-                        <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <p className="card-text text-truncate fw-bold text-white" style={{fontSize:'14px'}}> { getRealFileName(file.filename) } </p>
                       </div>
                     </div>
                     </div>

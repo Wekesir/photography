@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import { useDispatch, useSelector } from 'react-redux'
 import { logOut } from '../store/UserSlice'
+import logo from '../assets/logo.png';
 
 export default function Navbar() {
 
@@ -19,18 +20,18 @@ export default function Navbar() {
          */
 
         Cookies.remove("authJWTToken")
-
         dispatch( logOut() )
-
-        navigate("/login")
-      
+        navigate("/login")      
       }
 
   return (
     <>
-        <nav className="navbar navbar-expand-lg bg-dark text-white" data-bs-theme="dark" style={{ backgroundColor : 'rgba(0,0,0,.5)', color: 'white' }}>
+        <nav className="navbar navbar-expand-lg  text-white" data-bs-theme="dark" style={{ backgroundColor : 'rgba(0,0,0,.5)', color: 'white' }}>
         <div className="container-fluid">
-            <Link className="navbar-brand text-white" to="/projects">LYRICS STUDIOS.</Link>
+                <Link className="navbar-brand text-white" to="/projects">
+                <img src={ logo } alt="Logo" width="30" height="24" className="d-inline-block align-text-top me-2" />
+                LYRICS STUDIOS
+              </Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
             </button>

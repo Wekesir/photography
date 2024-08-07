@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MainNavbar from './MainNavbar'
 import logo from '../assets/logo.png'
 import { BACKEND_SERVER } from '../constants/constants'
 import axios from 'axios'
 import { CustomToastContainer, toast } from '../utils/toastUtil'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setFolderID } from '../store/clientSlice';
 
 export default function ClientPortalAuth() { 
 
@@ -13,11 +14,13 @@ export default function ClientPortalAuth() {
 
     const [formInput, setFormInput] = useState([]) //Will hold the email and the verification code of the user 
     const [submitLoading, setSubmitLoading] = useState(false);
-    const  navigate = useNavigate()
+
+    const {folder} = useSelector(state=>state.client)
+
+    const navigate = useNavigate()
     const dispatch = useDispatch()
 
     function handleinputChange(event) {
-
         const {name, value} = event.target
 
         //update the formInput state
@@ -28,7 +31,6 @@ export default function ClientPortalAuth() {
 
     async function handleSubmit(event) {
         event.preventDefault();
-
         setSubmitLoading( !submitLoading )
 
         try {
@@ -37,26 +39,29 @@ export default function ClientPortalAuth() {
                 throw new Error("Please provide both an email and a verification code.")
             }
 
-            //const {data} = await axios.post(`${BACKEND_SERVER}/clients/fetchProjectId.php`, formInput); console.log(data); 
-            const {data} = await axios.post(`${BACKEND_SERVER}/clients/test.php`, formInput); console.log(data);          
+            const {data} = await axios.post(`${BACKEND_SERVER}/clients/fetchProjectId.php`, formInput); 
     
-            // if(data?.status == 1) { //Success
-            //     dispatch(setFolderID(data.folder))
-            //     navigate("/clienthomepage")               
-            // } else if(data?.status == 0) { //Error Message 
-            //     throw new Error(data.msg) //Display the error message 
-            // }     
+            if(data?.status == 1) { //Success
+                dispatch(setFolderID(data.project))                             
+            } else if(data?.status == 0) { //Error Message 
+                throw new Error(data.msg) //Display the error message 
+            }     
         } catch (error) {
             toast( `Caught error: ${error.message}` ) 
         } finally {          
-            setFormInput({})
-           
+            setFormInput({})           
             setSubmitLoading( !submitLoading )
         }
     }
 
+    useEffect(()=>{
+        if(folder) {
+            navigate("/clienthomepage") 
+        }            
+    },[folder])
+
   return (
-    <>
+    <React.Fragment>
         <div className="container-fluid p-0 bg-dark text-white overflow-x-hidden" style={{height: '100vh'}}>
             <MainNavbar />
             <div className='border-start border-warning col-md-4 col-12 mx-auto p-4' style={{ backgroundColor : 'rgba(0,0,0,0.3)' }}>
@@ -94,6 +99,6 @@ export default function ClientPortalAuth() {
             </div>
         </div>
         <CustomToastContainer />
-    </>
+    </React.Fragment>
   )
 }

@@ -3,19 +3,18 @@ import { Link } from 'react-router-dom'
 import '../assets/css/sidenav.css'
 import axios from 'axios'
 import { BACKEND_SERVER } from '../constants/constants'
-
 import { CustomToastContainer, toast } from '../utils/toastUtil'
-
+import Cookies from 'js-cookie'
 
 export default function Sidenav() {
   const [activeDropdown, setActiveDropdown] = useState(null) //Sets the active dropdoown 
   const [selectedFiles, setSelectedFiles ] = useState([]) //Holds the image files selected for upload
   const [uploadFolder, setUploadFolder] = useState("") //Holds the folder to which we'll upload the files
   const [existingFolders, setExistingFolder] = useState([]) //Holds the folders already in the db
+  const [isUploadingFiles, setIsUploadingFiles] = useState(false)
 
   const fileinputRef  = useRef();
   const foldersToggleDivRef = useRef()
-  const uploadingSpinner = document.querySelector("#uploadingSpinner") 
  
   const toggleDropdown = (index) => {
     setActiveDropdown((prevIndex) => (prevIndex === index ? null : index));
@@ -84,18 +83,14 @@ export default function Sidenav() {
     foldersToggleDivRef.current.classList.contains("d-none") ? foldersToggleDivRef.current.classList.remove("d-none") : foldersToggleDivRef.current.classList.add("d-none") 
   }
 
-  function handleFilesSubmit(event){ //When the upload files has been clicked 
-    /**
-     * Before this executes, check to make sure
-     * Files have been provided
-     * Selected folder is not empty
-     */
-    event.target.setAttribute("disabled", true)
-    uploadingSpinner.classList.toggle("d-none") //Display the spinner
+  async function handleFilesSubmit(){ //When the upload files has been clicked 
+    try {
+      setIsUploadingFiles(!isUploadingFiles)
+  
+      if(!selectedFiles.length || !uploadFolder){
+        throw new Error("A folder and at least one file MUST be provided to proceed")
+      } 
 
-    if(!selectedFiles.length || !uploadFolder){
-      toast("A fodler and at least one file MUST be provided to proceed")
-    } else { 
       //Create a formData object and append all the image files 
       const formData = new FormData()
 
@@ -107,22 +102,20 @@ export default function Sidenav() {
       formData.append('folder', uploadFolder)
       
       //Make an axios post request
-      axios.post(BACKEND_SERVER + "/files/upload_files.php", formData, {
+      const response = await axios.post(`${BACKEND_SERVER}/files/upload_files.php`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
-      })
-      .then((res)=>{        
-        
-        toast(res.data.msg)
-  
-      }).catch((error) => {
-        toast(error) 
-      })
+      })     
+      if(response.data?.status === 0) {
+        throw new Error(response.data.msg)
+      }     
+      toast("File(s) uploaded successfully!") //Show success message
+    } catch (error) {
+      toast(`Caught Error: ${error.message}`);
+    } finally {
+      setIsUploadingFiles(!isUploadingFiles)
     }
-
-    event.target.removeAttribute("disabled")
-    uploadingSpinner.classList.toggle("d-none") //Hide the spinner 
   }
 
   //Fetch the folders that are already in the database 
@@ -130,20 +123,23 @@ export default function Sidenav() {
     const fetchFolders = async () => {
       try {        
         const jwtToken = Cookies.get("authJWTToken")
+        if(!jwtToken) {
+          throw new Error("JWT Token could not be found")
+        }
 
-        const response = await axios.get(BACKEND_SERVER + "/projects/fetch-projects.php", {
+        const response = await axios.get(`${BACKEND_SERVER}/projects/fetch-projects.php`, {
           headers : {
-            Authorization : `Bearer ${jwtToken}`
+            Authorization : `Bearer ${jwtToken}`,
+            'Content-Type' : 'application/json'
           }
         }); 
     
-        if(response.data?.status && response.data.status == 0){ //When there is an error trying to fetch existing folders
-          toast(response.data.msg)
-        } else { 
-          setExistingFolder(response.data.folders) 
-        }
+        if(response.data?.status == 0){ //When there is an error trying to fetch existing folders
+          throw new Error(response.data.msg)
+        } 
+        setExistingFolder(response.data.folders);          
       } catch (error) {
-        toast(error)
+        toast(`caught Error: ${error.message}`)
       } 
     }
 
@@ -154,13 +150,11 @@ export default function Sidenav() {
   useEffect(()=>{
     const modalElement = document.querySelector("#selectedFilesModal")
     if(modalElement){
-      modalElement.addEventListener('hidden.bs.modal', (event) => { 
+      modalElement.addEventListener('hidden.bs.modal', () => { 
         setSelectedFiles([])
       }) 
     }
   }, [])
-  
-
 
   return (
     <div className='conteiner-fluid overflow-y-auto' style={{backgroundColor: 'rgba(0,0,0,.5)', height: '84vh'}}>
@@ -244,11 +238,13 @@ export default function Sidenav() {
             </table>
             </div>
             <div className="modal-footer border-top border-secondary">
-              <button className="btn btn-default text-white me-aut d-none" type="button" id="uploadingSpinner">
-                <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> &nbsp;
-                <span className="" role="status">Uploading Files...</span>
+              <button type="button" className="btn btn-primary px-3" onClick={ handleFilesSubmit } disabled={ isUploadingFiles }>
+                <i className="bi bi-cloud-arrow-up-fill"></i>  
+                  Upload File(s). &nbsp;
+                  {isUploadingFiles && (
+                     <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> 
+                  )}
               </button>
-              <button type="button" className="btn btn-primary px-3" onClick={ handleFilesSubmit }><i className="bi bi-cloud-arrow-up-fill"></i> Upload </button>
             </div>
           </div>
         </div>
