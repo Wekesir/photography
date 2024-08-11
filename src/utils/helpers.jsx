@@ -1,6 +1,29 @@
 import axios from "axios"
 import { BACKEND_SERVER } from '../constants/constants'
 
+export function handleZoom(e){
+  /**
+   * When implementing this function, make sure to also import
+   * const [scale, setScale] = useState(1);
+   * And also, in the img element add,  style={{ transform: `scale(${scale})` }}
+   */
+  e.preventDefault();
+  
+  const delta = e.deltaY; //captures the direction and intensity of the wheel movement.
+  const zoomSpeed = 0.1;
+
+  setScale(prevScale => {
+    const newScale = delta > 0 ? prevScale - zoomSpeed : prevScale + zoomSpeed;
+    
+    return Math.min(Math.max(newScale, 0.5), 3); //keeps the scale between 0.5 and 3.
+  });
+};
+
+export function getFileNameExtension(filename){
+  const parts = filename.split(".")
+  return (parts.length > 1) ? parts[1].toLowerCase() : ""
+}
+
 export function clientTimeZone() {
   /**
    * This function returns the current user timezone automatically

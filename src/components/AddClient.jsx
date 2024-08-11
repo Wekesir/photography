@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { ToastContainer, toast } from 'react-toastify'
-import '../../node_modules/react-toastify/dist/ReactToastify.css'
+import { CustomToastContainer, toast } from '../utils/toastUtil';
 import axios from 'axios';
 import { BACKEND_SERVER } from '../constants/constants'
 import { useNavigate } from 'react-router-dom';
@@ -20,50 +19,32 @@ export default function AddClient( { widthClass } ) {
         setFormData({ ...formData, [name]: value });
     }
 
-    function notify(message){
-        toast(message)
-    }
-
-    function handleSubmit(e){
+    async function handleSubmit(e){
         e.preventDefault();
-
-        const spinner = e.target.querySelector(".spinner-border")
-
-        spinner.classList.remove("d-none")
-
-        axios.post(BACKEND_SERVER + "/clients/addNewClient.php", formData)
-        .then((response)=>{
-            console.log(response.data); //Data from the console
-            
-            if (response.data?.status && response.data.status === 1){
-                notify(response.data.msg);
-
-                setFormData({username: '',
-                phoneNumber: '',
-                email: ''});   
+        try {            
+            const spinner = e.target.querySelector("span.spinner-border")    
+            spinner.classList.remove("d-none")
+    
+            const response = await axios.post(BACKEND_SERVER + "/clients/addNewClient.php", formData)          
                 
-                navigate("/clients")
-                
-            } else {
-                notify(response.data.msg);
-            }
-        }).catch((error) => {
-                notify(error);
-
-                //Reset the form Data
-                setFormData({username: '',
+            if (response.data?.status === 0){ //Error
+                throw new Error(response.data.msg)        
+            }          
+            navigate("/clients")                
+        } catch (error){
+            toast(`Caught Error: ${error.message}` || "Unknown error.")
+        } finally {
+            setFormData({username: '',
                 phoneNumber: '',
-                email: ''});       
-        });
+                email: ''}); 
 
-        spinner.classList.add("d-none");
+            spinner.classList.add("d-none");
+        }
 
     }
 
   return (
-    <>
-       
-
+    <React.Fragment>        
         <div className="container-fluid overflow-y-auto d-flex align-items-center" style={{height:'78vh'}}>          
             <form className={`border border-secondary ${widthClass} p-4 mx-auto`} method='post' onSubmit={handleSubmit}>
                 <h6>Client Information:</h6><hr className='border border-secondary'/>
@@ -84,20 +65,7 @@ export default function AddClient( { widthClass } ) {
                 </div>           
             </form>
         </div>
-
-        <ToastContainer
-            position="bottom-left"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-            transition: Bounce
-        />
-    </>
+        <CustomToastContainer />
+    </React.Fragment>
   )
 }

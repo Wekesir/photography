@@ -4,6 +4,7 @@ import '../assets/css/sidenav.css'
 import axios from 'axios'
 import { BACKEND_SERVER } from '../constants/constants'
 import { CustomToastContainer, toast } from '../utils/toastUtil'
+import { getFileNameExtension } from '../utils/helpers'
 import Cookies from 'js-cookie'
 
 export default function Sidenav() {
@@ -74,10 +75,7 @@ export default function Sidenav() {
      foldersToggleDivRef.current.classList.add("d-none")
   }
 
-  function getFileNameExtension(filename){
-    const parts = filename.split(".")
-    return (parts.length > 1) ? parts[1].toLowerCase() : ""
-  }
+
 
   function handleToggleFoldersList(){
     foldersToggleDivRef.current.classList.contains("d-none") ? foldersToggleDivRef.current.classList.remove("d-none") : foldersToggleDivRef.current.classList.add("d-none") 
@@ -157,7 +155,7 @@ export default function Sidenav() {
   }, [])
 
   return (
-    <div className='conteiner-fluid overflow-y-auto' style={{backgroundColor: 'rgba(0,0,0,.5)', height: '84vh'}}>
+    <div className='conteiner-fluid overflow-y-auto' style={{backgroundColor: 'rgba(0,0,0,.5)', minHeight: '84vh'}}>
         <div className="dropdown text-white m-2 d-grid gap-2"> 
           <button className="btn btn-secondary dropdown-toggle" type="button" title="Upload new file(s) or folder." data-bs-toggle="dropdown" aria-expanded="false">
           <i className="bi bi-folder-plus"></i> &nbsp; New Project
