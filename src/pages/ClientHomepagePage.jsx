@@ -20,15 +20,19 @@ export default function ClientHomepagePage() {
     setFileInfo(value)
   }
 
-  const triggerDownloadFolder = (e)=>{
-    e.target.disabled = "true"
-    e.target.querySelector("span.spinner-border").classList.remove("d-none")
-
-    handleDownloadFolder({'project_id': folder, 'project_name':folderName})
-
-    e.target.querySelector("span.spinner-border").classList.add("d-none")
-    e.target.disabled = "false"
-  }
+  const triggerDownloadFolder = async (e) => {
+    try {
+      e.target.disabled = true;
+      e.target.querySelector("span.spinner-border").classList.remove("d-none");
+  
+      await handleDownloadFolder({'project_id': folder, 'project_name': folderName});
+    } catch (error) {
+      toast(`Download failed:${error}`);
+    } finally {
+      e.target.querySelector("span.spinner-border").classList.add("d-none");
+      e.target.disabled = false;
+    }
+  };
 
   useEffect(()=>{
     document.title = `${folderName || "Homepage"} | Lyrics Photography`
@@ -54,7 +58,7 @@ export default function ClientHomepagePage() {
                <div className="col-12 col-md-9">
                     <div className='d-flex justify-content-between align-items-center py-2'>
                       <h5 className='text-white fw-bold'> <i className="bi bi-folder"></i> { folderName || "PROJECT NAME" }</h5>
-                      <button className='btn btn-md btn-secondary'onClick={ ()=>{triggerDownloadFolder} } title='Click to download this folder.'> 
+                      <button className='btn btn-md btn-secondary'onClick={ (event)=>{triggerDownloadFolder(event)} } title='Click to download this folder.'> 
                         <i className="bi bi-cloud-arrow-down-fill"></i> Download Folder <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
                       </button>
                     </div>

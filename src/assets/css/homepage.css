@@ -34,3 +34,113 @@ video {
     height: 525px;
 }
 
+section#contact {
+    background-image: url('https://media.istockphoto.com/id/2158171845/photo/close-up-of-a-businessman-working-on-a-laptop-computer-and-holding-and-looking-at-a-mobile.jpg?s=1024x1024&w=is&k=20&c=3yeHEaih3fu9xx4RhumBdAWtMgNrqjooo8qW5uMKd6g=');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+section#contact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+section#contact > .content-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+section#contact > .map-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+section#contact > #socials {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;   
+}
+
+section#contact > #socials ul Link {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+section#contact > ul Link:hover {
+    color: goldenrod;
+}
+
+section#contact > .icon-wrapper {
+    display: inline-flex;   
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 5px solid goldenrod;
+}
+
+section#services {
+    background-image: url("https://cdn.pixabay.com/photo/2016/10/26/22/01/abstract-1772755_640.jpg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding-bottom: 3rem;
+}
+
+section#services img:hover, 
+section#services .card:hover > section#services img {
+    animation: scale 500ms ease-in-out forwards;
+}
+
+@keyframes scale {
+    from {
+        transform: scale(1);
+    }
+    to {
+      transform: scale(1.1);
+    }
+}
+
+section#services .card-title {
+    color: goldenrod;
+    position: relative;
+    display: inline-block;
+}
+
+section#services .card {
+    border: 1px solid rgba(245, 245, 245, .3);
+}
+
+section#services .card:hover {
+    border: 1px solid goldenrod;
+}
+
+section#services .card-title::after {
+    content: "";
+    position: absolute;
+    bottom: -10px; /* Position the underline below the text */
+    left: 25%;
+    width: 0; /* Initial width (no underline) */
+    height: 3px; /* Thickness of the underline */
+    background-color: white; /* White color */
+    transition: width 0.3s ease-in-out; /* Animation duration and easing */
+}
+
+section#services > .card:hover section#services > .card-title::after {
+    width: 50%; /* Slide the underline from left to right */
+}
+
+section#services .card-body {
+    background-color: rgba(128, 128, 128, 0.1);
+    opacity: 0.8;
+}
+
