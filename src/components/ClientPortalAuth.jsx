@@ -6,7 +6,7 @@ import axios from 'axios'
 import { CustomToastContainer, toast } from '../utils/toastUtil'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { setFolderID } from '../store/clientSlice';
+import { setFolderID, setClientEmail } from '../store/clientSlice';
 
 export default function ClientPortalAuth() { 
 
@@ -42,7 +42,8 @@ export default function ClientPortalAuth() {
             const {data} = await axios.post(`${BACKEND_SERVER}/clients/fetchProjectId.php`, formInput); 
     
             if(data?.status == 1) { //Success
-                dispatch(setFolderID(data.project))                             
+                dispatch( setFolderID(data.project) )  
+                dispatch( setClientEmail(formInput.email) )                            
             } else if(data?.status == 0) { //Error Message 
                 throw new Error(data.msg) //Display the error message 
             }     
