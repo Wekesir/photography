@@ -7,7 +7,7 @@ export default function MainNavbar() {
   return (
     <>  
         <div className="container-fluid">
-          <nav className="navbar navbar-expand-lg bg-dark text-white fxed-top border-bottom border-secondary shadow-sm" id="frontendNav">
+          <nav className="navbar navbar-expand-lg bg-dark py-3 text-white fxed-top border-bottom border-secondary shadow-sm" id="frontendNav">
             <div className="container-fluid">
               <Link className="navbar-brand text-white d-flex align-middle" to="/">
                 <img src={ logo } alt="Logo" width="30" height="24" className="d-inline-block align-text-top mr-2" />
