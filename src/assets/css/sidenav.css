@@ -1,15 +1,16 @@
-ul li{
+.sidenav ul li{
     list-style: none;
     padding: 10px 5px;
     color: rgba(255,255,255,.7)
 }
-ul li:hover{
+.sidenav ul li:hover{
     background-color: rgba(128,128,128,.2);
     color: rgba(255,255,255,1);
-}ul li .active(
+}
+.sidenav ul li .active(
     color: rgba(255,255,255,1);
 )
-ul li > ul.mainmenu-dropdown li{
+.sidenav ul li > ul.mainmenu-dropdown li{
     display: none;
-    color: white;
+    color: white; 
 }

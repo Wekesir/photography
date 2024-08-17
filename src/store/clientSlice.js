@@ -14,10 +14,13 @@ const ClientSlice = createSlice({
         setClientEmail : (state, action) => {
             state.clientEmail = action.payload
         },
+        unsetClientEmail : (state) => { //Remove the client email
+            state.clientEmail = ''
+        },
         unsetFolderID : (state) => { //Remove the folder ID
             state.folder = ''
         }
     }
 })
-export const {setFolderID, setClientEmail, unsetFolderID} = ClientSlice.actions 
+export const {setFolderID, setClientEmail, unsetClientEmail, unsetFolderID} = ClientSlice.actions 
 export default ClientSlice.reducer;

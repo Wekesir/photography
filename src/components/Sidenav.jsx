@@ -155,7 +155,7 @@ export default function Sidenav() {
   }, [])
 
   return (
-    <div className='conteiner-fluid overflow-y-auto' style={{backgroundColor: 'rgba(0,0,0,.5)', minHeight: '84vh'}}>
+    <div className='container-fluid overflow-y-auto sidenav' style={{backgroundColor: 'rgba(0,0,0,.5)', minHeight: '84vh'}}>
         <div className="dropdown text-white m-2 d-grid gap-2"> 
           <button className="btn btn-secondary dropdown-toggle" type="button" title="Upload new file(s) or folder." data-bs-toggle="dropdown" aria-expanded="false">
           <i className="bi bi-folder-plus"></i> &nbsp; New Project

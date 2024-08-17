@@ -1,0 +1,9 @@
+.float-sidenav {
+    /* Initial styles */
+    transition: all 0.3s ease; /* Smooth transition effect */
+    width: 100%;
+    background-color: #007bff; /* Your desired background color */
+    z-index: 100; /* Higher z-index to make it appear on top */
+    position: absolute;
+    background-color: rgba(0,0,0.5);
+}

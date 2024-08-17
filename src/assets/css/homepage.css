@@ -16,16 +16,50 @@
     background: linear-gradient(to right, yellow, goldenrod);
 }
 
-#textOverlayDiv{
+#textOverlayDiv {
     position: absolute; 
     top: 50%; 
-    transform: translateY(-50%);
-    font-size: 60px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%; /* This leaves 10% on either side */
     color: white;
-    font-family: 'Autour One';
+    font-family: 'Autour One', sans-serif;
     font-style: normal;
     font-weight: 400;
-    width: 100%;
+    text-align: center;
+}
+
+#textOverlayDiv p {
+    font-size: 6vw; /* Increased base font size */
+    margin-bottom: 20px;
+    line-height: 1.2; /* Adjust line height for better readability */
+}
+
+#textOverlayDiv button {
+    font-size: 3vw; /* Increased button font size */
+    max-width: 80%; /* Ensure button doesn't exceed text width */
+    white-space: normal; /* Allow button text to wrap */
+}
+
+/* Media queries for different screen sizes */
+@media screen and (min-width: 768px) {
+    #textOverlayDiv p {
+        font-size: 5vw;
+    }
+    
+    #textOverlayDiv button {
+        font-size: 2.5vw;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    #textOverlayDiv p {
+        font-size: 72px; /* Increased max font size for larger screens */
+    }
+    
+    #textOverlayDiv button {
+        font-size: 30px; /* Increased max button font size for larger screens */
+    }
 }
 
 video {

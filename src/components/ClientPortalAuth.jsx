@@ -29,11 +29,10 @@ export default function ClientPortalAuth() {
         }))
     }
 
-    async function handleSubmit(event) {
-        event.preventDefault();
-        setSubmitLoading( !submitLoading )
-
+    async function handleSubmit(event) {       
         try {
+            event.preventDefault();
+            setSubmitLoading( !submitLoading )
 
             if(!formInput.email || !formInput.code){
                 throw new Error("Please provide both an email and a verification code.")
@@ -73,7 +72,7 @@ export default function ClientPortalAuth() {
 
                 <form action="#" method="post" onSubmit={handleSubmit}>
                     <div className="mb-3">
-                        <label htmlFor="email" className='text-white fw-bold mb-2'>EMAIL ADDRESS</label>
+                        <label htmlFor="email" className='text-white fw-bold mb-2'>EMAIL</label>
                         <input type="email" name="email" id="email" onChange={handleinputChange} value={formInput.email || ""} className='form-control border border-secondary text-white bg-dark' required />
                     </div>                    
                     <div className={`mb-3 `} >

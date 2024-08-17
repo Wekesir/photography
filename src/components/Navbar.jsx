@@ -25,7 +25,7 @@ export default function Navbar() {
       }
 
   return (
-    <>
+    <React.Fragment>
         <nav className="navbar navbar-expand-lg  text-white" data-bs-theme="dark" style={{ backgroundColor : 'rgba(0,0,0,.5)', color: 'white' }}>
         <div className="container-fluid">
                 <Link className="navbar-brand text-white" to="/projects">
@@ -51,6 +51,6 @@ export default function Navbar() {
             </span>
         </div>
         </nav>
-    </>
+    </React.Fragment>
   )
 }

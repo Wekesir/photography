@@ -20,28 +20,28 @@ export default function index() {
 
   const handleSubmitSubscription = async(e)=>{
     e.preventDefault()
-
+    const subscriberForm = e.target; 
     try {
-      e.target.querySelector('button[type="submit"]').disabled = true //Prevents submitting several times
-      e.target.querySelector('button[type="submit > span.spinner-border"]').classList.remove("d-none")
+      subscriberForm.querySelector('button[type="submit"]').disabled = true //Prevents submitting several times
+      subscriberForm.querySelector('button[type="submit"] > span.spinner-border').classList.remove("d-none")
       
-      if(Object.keys(formData).length === 0){
+      if(Object.keys(subscriptionInfo).length === 0){
         throw new Error("No data has been provided in the form.")
       }
       
       const {data} = await axios.post(`${BACKEND_SERVER}/guest/subscribe.php`, subscriptionInfo)
       
       if(data?.status === 1){
-        toast("You have been successfully subscribed! We will send you an email confirmation shortly.")       
+        toast(data.msg) //Success message
       } else {
-        throw new Error(data.msg)
-      }        
+        throw new Error(data.msg) 
+      }  
     } catch(error) {
-      toast(`Caught Error: ${error.message}`)
-    } finally {
-      setMessageFormInput({})
-      e.target.querySelector('button[type="submit"]').disabled = false
-      e.target.querySelector('button[type="submit > span.spinner-border"]').classList.add("d-none")
+      toast(`Caught Error: ${error.message}`) //Error message
+    } finally {      
+      setSubscriptionInfo({})
+      subscriberForm.querySelector('button[type="submit"]').disabled = false
+      subscriberForm.querySelector('button[type="submit"] > span.spinner-border').classList.add("d-none")
     }
   }
 
@@ -49,7 +49,7 @@ export default function index() {
     e.preventDefault()
     try {
       e.target.querySelector('button[type="submit"]').disabled = true //Prevents submitting several times
-      e.target.querySelector('button[type="submit > span.spinner-border"]').classList.remove("d-none")
+      e.target.querySelector('button[type="submit"] > span.spinner-border').classList.remove("d-none")
 
       if(Object.keys(messageFormInput).length === 0){
         throw new Error("No data has been provided in the form.")
@@ -68,7 +68,7 @@ export default function index() {
     } finally {
       setMessageFormInput({})
       e.target.querySelector('button[type="submit"]').disabled = false 
-      e.target.querySelector('button[type="submit > span.spinner-border"]').classList.add("d-none") //Hide spinner
+      e.target.querySelector('button[type="submit"] > span.spinner-border').classList.add("d-none") //Hide spinner
     }
   }
 
@@ -96,7 +96,7 @@ export default function index() {
           <div id="textOverlayDiv" className="text-center">    
               <p> 
                 Welcome to <br />
-                Lyrics Photography
+                Lyrics Photography 
               </p>
               <button className='btn btn-primary text-center py-3 px-5 gradient-background fw-bold'>Get Started</button>
           </div>
@@ -107,7 +107,7 @@ export default function index() {
             <h1 className="text-white text-center fw-bold py-4">Our <span className='gradient-text'>Services</span></h1>
             <div className="row">
               <div className="col-12 col-md-3">
-                <div className="card w-100 bg-dark text-white">
+                <div className="card w-100 bg-dark text-white mb-3 mb-md-0">
                   <img src="https://cdn.pixabay.com/photo/2020/03/09/06/18/camera-4914690_640.jpg" className="card-img-top" alt="..." />
                   <div className="card-body" style={{minHeight: '15rem'}}>
                     <h5 className="card-title">Photography</h5>
@@ -115,12 +115,12 @@ export default function index() {
                         Our photography services include portrait, landscape, wedding, family, and corporate photography.
                         From capturing the essence of a person to capturing the beauty of a place, we deliver exceptional results.
                     </p>
-                    <Link to="#" class="btn btn-warning btn-md">Get In touch</Link>
+                    <Link to="#" className="btn btn-warning btn-md">Get In touch</Link>
                   </div>
                 </div>         
               </div>
               <div className="col-12 col-md-3">
-                <div className="card w-100 bg-dark text-white">
+                <div className="card w-100 bg-dark text-white mb-3 mb-md-0">
                   <img src="https://cdn.pixabay.com/photo/2022/05/30/08/04/camera-7230748_640.jpg" className="card-img-top" alt="..." />
                   <div className="card-body" style={{minHeight: '15rem'}}>
                     <h5 className="card-title">Videography</h5>
@@ -128,12 +128,12 @@ export default function index() {
                         Our studios also specialize in videography, creating cinematic videos for weddings, events, or promotional purposes.
                         From capturing the essence of a person to capturing the beauty of a place, we deliver exceptional results.
                     </p>
-                    <Link to="#" class="btn btn-warning btn-md">Get In touch</Link>
+                    <Link to="#" className="btn btn-warning btn-md">Get In touch</Link>
                   </div>
                 </div>   
               </div>
               <div className="col-12 col-md-3">
-                <div className="card w-100 bg-dark text-white">
+                <div className="card w-100 bg-dark text-white mb-3 mb-md-0">
                   <img src="https://cdn.pixabay.com/photo/2016/03/06/22/35/retouch-1241322_640.jpg" className="card-img-top" alt="..." />
                   <div className="card-body" style={{minHeight: '15rem'}}>
                     <h5 className="card-title">Editing & Retouching</h5>
@@ -141,12 +141,12 @@ export default function index() {
                         Professional editing ensures your photos look their best, with color correction, retouching, and enhancements
                         to enhance your images. We're here to help you create the perfect shot.
                     </p>
-                    <Link to="#" class="btn btn-warning btn-md">Get In touch</Link>
+                    <Link to="#" className="btn btn-warning btn-md">Get In touch</Link>
                   </div>
                 </div>   
               </div>
               <div className="col-12 col-md-3">
-                <div className="card w-100 bg-dark text-white">
+                <div className="card w-100 bg-dark text-white mb-3 mb-md-0">
                   <img src="https://cdn.pixabay.com/photo/2022/12/24/21/14/portrait-7676482_640.jpg" className="card-img-top" alt="..." />
                   <div className="card-body" style={{minHeight: '15rem'}}>
                     <h5 className="card-title">Passport Photos</h5>
@@ -154,7 +154,7 @@ export default function index() {
                         Studios offer passport and visa photos that meet official requirements.
                         We ensure that your passport photos are of high quality and meet official requirements.
                     </p>
-                    <Link to="#" class="btn btn-warning btn-md">Get In touch</Link>
+                    <Link to="#" className="btn btn-warning btn-md">Get In touch</Link>
                   </div>
                 </div>  
               </div>
@@ -166,22 +166,22 @@ export default function index() {
           <div className="container-fluid content-wrapper">
               <h1 className="text-center py-4 text-white"><span className='gradient-text'>Contact</span> Us</h1>
               <div className="row">
-                  <div className="col-12 col-md-6 mb-sm-4">
+                  <div className="col-12 col-md-6 mb-3 mb-md-0">
                   <div id="socials" style={{backgroundColor:'rgba(255,255,255,.1)', height:'100%'}}>
-                    <ul className="list-group gy-3" >
-                      <Link to="#" className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center" style={{backgroundColor:'rgba(0,0,0,0)', fontSize: '1.2rem', padding: '10px 15px'}}>
-                        <span className="icon-wrapper me-3 border border-light rounded-circle py-2 px-3"><i className="bi bi-telephone"></i></span>
-                        +(254)711616621
-                      </Link>
-                      <Link to="#" className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center" style={{backgroundColor:'rgba(0,0,0,0)', fontSize: '1.5rem', padding: '10px 15px'}}>
-                        <span className="icon-wrapper me-3 border border-light rounded-circle py-2 px-3"><i className="bi bi-envelope"></i></span>
-                        lyricsphotography@gmail.com
-                      </Link>
-                      <Link to="#" className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center" style={{backgroundColor:'rgba(0,0,0,0)', fontSize: '1.5rem', padding: '10px 15px'}}>
-                        <span className="icon-wrapper me-3 border border-light rounded-circle py-2 px-3"><i className="bi bi-geo-alt-fill text-white"></i></span>
-                        Jodan House, Thika.
-                      </Link>                      
-                    </ul>
+                    <ul className="list-group gy-3">
+                        <Link to="#" className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center" style={{backgroundColor:'rgba(0,0,0,0)', fontSize: 'clamp(0.9rem, 2.5vw, 1.2rem)', padding: '10px 15px'}}>
+                          <span className="icon-wrapper me-3 border border-light rounded-circle py-2 px-3"><i className="bi bi-telephone"></i></span>
+                          +(254)711616621
+                        </Link>
+                        <Link to="#" className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center" style={{backgroundColor:'rgba(0,0,0,0)', fontSize: 'clamp(1rem, 3vw, 1.5rem)', padding: '10px 15px'}}>
+                          <span className="icon-wrapper me-3 border border-light rounded-circle py-2 px-3"><i className="bi bi-envelope"></i></span>
+                          lyricsphotography@gmail.com
+                        </Link>
+                        <Link to="#" className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center" style={{backgroundColor:'rgba(0,0,0,0)', fontSize: 'clamp(1rem, 3vw, 1.5rem)', padding: '10px 15px'}}>
+                          <span className="icon-wrapper me-3 border border-light rounded-circle py-2 px-3"><i className="bi bi-geo-alt-fill text-white"></i></span>
+                          Jodan House, Thika.
+                        </Link>                      
+                      </ul>
                   </div>
                   </div>
                   <div className="col-12 col-md-6 mb-2">
@@ -199,7 +199,7 @@ export default function index() {
                           <textarea onChange={handleFileInputChange} name="msg" value={ messageFormInput.msg || "" } className="form-control text-white bg-dark bg-opacity-75 border border-secondary" id="message" rows="3" required></textarea>
                         </div>
                         <button type="submit" className="btn btn-primary btn-lg px-5 gradient-background text-white fw-bold">
-                          <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> Submit
+                          <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> Submit
                         </button>                       
                       </form>
                   </div>
@@ -252,7 +252,7 @@ export default function index() {
                 <form onSubmit={handleSubmitSubscription}>
                   <input type="email" name="email" onChange={handleSubscription} value={ subscriptionInfo.email || "" } className="form-control mb-2 bg-transparent text-white border border-secondary" placeholder="Your Email Address" />
                   <button type="submit" className="btn btn-primary px-5">
-                    <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> Subscribe
+                    <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> Subscribe
                   </button>
                 </form>
                 <p className="text-white" style={{color:'rgba(255,255,255,.9)'}}>
