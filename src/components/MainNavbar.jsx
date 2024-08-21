@@ -2,6 +2,7 @@ import React from 'react'
 import '../assets/css/homepage.css'
 import logo from '../assets/logo.png'
 import { Link } from 'react-router-dom'
+import { ScrollLink } from 'react-scroll'
 
 export default function MainNavbar() {
   return (
@@ -19,16 +20,16 @@ export default function MainNavbar() {
               <div className="collapse navbar-collapse" id="navbarNav">
                 <ul className="navbar-nav ms-auto">
                   <li className="nav-item">
-                    <Link className="nav-link active text-white" aria-current="page" to="/">Home</Link>
+                    <ScrollLink className="nav-link active text-white" smooth={true} duration={500} aria-current="page" to="backroundVideo">Home</ScrollLink>
                   </li>                 
                   <li className="nav-item">
-                    <Link className="nav-link text-white" to="#services">Services</Link>
+                    <ScrollLink className="nav-link text-white" smooth={true} duration={500} to="services">Services</ScrollLink>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link text-white" to="#contact">Contact us</Link>
+                    <ScrollLink className="nav-link text-white" smooth={true} duration={500} to="contact">Contact us</ScrollLink>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link text-white" to="#">Gallery</Link>
+                    <ScrollLink className="nav-link text-white" smooth={true} duration={500} to="#">Gallery</ScrollLink>
                   </li>
                   <li className ="nav-item dropdown">
                     <Link className ="nav-link dropdown-toggle text-white" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
