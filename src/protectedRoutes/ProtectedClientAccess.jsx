@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Navigate, Outlet } from 'react-router-dom'
 
 export default function ProtectedClientAccess() {
-    const {folder} = useSelector((state)=> {state.client})
+    const { clientEmail } = useSelector((state)=> {state.client})
 
-    return folder ? <Outlet /> : <Navigate to="/" replace /> 
+    return clientEmail ? <Outlet /> : <Navigate to="/" replace />  
 }
