@@ -30,7 +30,7 @@ function App() {
             <Route path='/signup' element={ <SignUpPage /> }></Route>
             <Route path='/resetpassword' element={ <ResetPasswordPage/> }></Route>       
 
-            {/* <Route element={<LoginProtectedRoute />}> */}
+            <Route element={<LoginProtectedRoute />}>
               <Route path='/home' element={  <HomePage/>  }></Route>
               <Route path="/newClient" element={  <AddClients /> }></Route>
               <Route path="/clients" element={  <ClientsList /> }></Route>
@@ -41,11 +41,11 @@ function App() {
               <Route path="/newbooking" element={ <NewBookingsPage /> }></Route> 
               <Route path="/updateprofile" element={ <ProfilePage /> }></Route>      
               <Route path="/bookings" element={ <BookingsPage /> }></Route>   
-            {/* </Route> */}
+            </Route>
 
-            {/* <Route element={<ClientAccessRoute />}> */}
+            <Route element={<ClientAccessRoute />}>
               <Route path="/clienthomepage" element={ <ClientHomepagePage /> }></Route>
-            {/* </Route> */}
+            </Route>
 
               {/**Catch any other routes*/}
               <Route path="*" element={ <Index />}></Route>     
