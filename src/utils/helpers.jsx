@@ -34,7 +34,7 @@ export function formatFileSize(sizeInBytes) {
 
 export function getFileNameExtension(filename){
   const parts = filename.split(".")
-  return (parts.length > 1) ? parts[1].toLowerCase() : ""
+  return (parts.length > 1) ? parts.pop().toLowerCase() : ""
 }
 
 export function clientTimeZone() {
