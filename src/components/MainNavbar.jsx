@@ -2,17 +2,17 @@ import React from 'react'
 import '../assets/css/homepage.css'
 import logo from '../assets/logo.png'
 import { Link } from 'react-router-dom'
-import { ScrollLink } from 'react-scroll'
+import { Link as ScrollLink } from 'react-scroll'
 
 export default function MainNavbar() {
   return (
     <React.Fragment>  
         <div className="container-fluid">
-          <nav className="navbar navbar-expand-lg bg-dark py-3 text-white fxed-top border-bottom border-secondary shadow-sm" id="frontendNav">
+          <nav className="navbar navbar-expand-lg bg-dark py-3 text-white fxed-top border-bottom border-dark shadow-sm" id="frontendNav">
             <div className="container-fluid">
               <Link className="navbar-brand text-white d-flex align-middle" to="/">
                 <img src={ logo } alt="Logo" width="30" height="24" className="d-inline-block align-text-top mr-2" />
-                Lyrics Photography
+                Lyrics Studios
               </Link>
               <button className="navbar-toggler btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <i className="bi bi-list text-white"></i>
@@ -29,7 +29,7 @@ export default function MainNavbar() {
                     <ScrollLink className="nav-link text-white" smooth={true} duration={500} to="contact">Contact us</ScrollLink>
                   </li>
                   <li className="nav-item">
-                    <ScrollLink className="nav-link text-white" smooth={true} duration={500} to="#">Gallery</ScrollLink>
+                    <ScrollLink className="nav-link text-white" smooth={true} duration={500} to="gallery">Gallery</ScrollLink>
                   </li>
                   <li className ="nav-item dropdown">
                     <Link className ="nav-link dropdown-toggle text-white" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

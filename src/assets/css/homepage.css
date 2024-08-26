@@ -16,6 +16,10 @@
     background: linear-gradient(to right, yellow, goldenrod);
 }
 
+.navbar ul li{
+   cursor: pointer;
+}
+
 #textOverlayDiv {
     position: absolute; 
     top: 50%; 
@@ -177,4 +181,27 @@ section#services .card-body {
     background-color: rgba(128, 128, 128, 0.1);
     opacity: 0.8;
 }
+
+section#gallery img {
+    height: 350px;
+    width: 100%;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+    object-fit: cover;
+}
+
+section#gallery img:hover {
+    transform: scale(1.1);
+}
+
+section#gallery {
+    background-image: url('https://cdn.pixabay.com/photo/2023/11/14/15/46/nikon-8388022_640.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+ 
+
 
