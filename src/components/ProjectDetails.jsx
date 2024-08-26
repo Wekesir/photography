@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { BACKEND_SERVER } from '../constants/constants'
-import { getRealFileName, handleDownloadFile } from '../utils/helpers'
-
-import { ToastContainer, toast } from 'react-toastify'
-import '../../node_modules/react-toastify/dist/ReactToastify.css'
+import { getRealFileName, handleDownloadFile , getFileNameExtension} from '../utils/helpers'
+import { CustomToastContainer, toast} from '../utils/toastUtil'
+import Loading from './Loading'
 
 export default function ProjectDetails() {
 
@@ -19,9 +18,9 @@ export default function ProjectDetails() {
    // Define the function outside of the condition
     async function getFolderFiles(id) {
         try {
-            const response = await axios.post(BACKEND_SERVER + "/files/get-folder-files.php", { FOLDER_ID : id });
+            const response = await axios.post(`${BACKEND_SERVER}/files/get-folder-files.php`, { FOLDER_ID : id });
 
-            if(response.data.status === 1){ 
+            if(response.data?.status === 1){ 
                 setFiles(response.data.files);
                 setIsLoading(false);
                 return true;
@@ -29,7 +28,7 @@ export default function ProjectDetails() {
                 throw new Error(response.data.msg);
             }
         } catch (error) {
-            notify(error);
+            toast(error || "Unknown error trying to fetch files in folder.");
             return false;
         }
     }
@@ -39,7 +38,7 @@ export default function ProjectDetails() {
         useEffect(() => {
             const success = getFolderFiles(id);
             if (!success) {
-                notify('Failed to get folder files');
+                toast('Failed to get folder files');
             }
         }, []);
     } else {
@@ -52,42 +51,32 @@ export default function ProjectDetails() {
 
         try {            
             //make an axios post too delete-file.php
-            const response = await axios.post( BACKEND_SERVER + "/files/delete-file.php", file)           
+            const response = await axios.post(`${BACKEND_SERVER}/files/delete-file.php`, file)           
     
-            if(response.data.status == 1 && response.data?.status) {
+            if(response.data?.status == 1) {
                 //Loop through all the files and remove the deleted file 
                 let newFiles = files.filter(f => f.filename != file.filename)
                 setFiles(newFiles)
-                notify(response.data.msg)
+                toast(response.data.msg)
     
             } else {
                 throw new Error(response.data.msg)
             }          
         } catch (error) {
-            notify( error )
+            toast( error || "Unknown error has been caught.")
         } finally {
             //Hide the spinner
             event.target.querySelector("span.spinner-border").classList.add("d-none")
         }
-
-    }
-
-    function notify(message){
-        toast(message)
     }
 
   return (
-    <>
+    <React.Fragment>
         <div className="container-fluid overflow-y-auto" style={{maxHeight:'84.5vh'}}>
             <h5 className="text-white mb-3"><i className="bi bi-folder-fill"></i> &nbsp; { folder } </h5>
 
             {isLoading ? (
-                <div className="text-center align-middle">
-                    <div className="spinner-border text-secondary" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                    <span role="status" className="ms-3 fw-bold text-secondary">Loading files...</span>
-                </div>
+                <Loading />
             ) : (
                 files.length == 0 ? (
                     <h4 className="text-secondary text-center"><i className="bi bi-file-earmark-excel"></i> No images found </h4>
@@ -96,9 +85,16 @@ export default function ProjectDetails() {
                         { files.map((file, index)=>(
                             <div className="col-12 col-md-3 mb-4" key={ index }>
                             <div className="card text-bg-dark border border-secondary" >
-                                <img src={ BACKEND_SERVER + `/assets/img/${file.filename}` } style={{height:'180px'}} className="card-img-top mx-auto d-block rounded object-fit-contai" alt="Image" />
+                                { getFileNameExtension(file.filename)  == "mp4" ? (
+                                     <video width="100%" controls>
+                                       <source src={ `${BACKEND_SERVER}/assets/img/${file.filename}`} type="video/mp4" />
+                                       Your browser does not support the video tag.
+                                     </video>
+                                    ) : (
+                                      <img src={ `${BACKEND_SERVER}/assets/img/${file.filename}` } style={{height:'180px'}} className="card-img-top mx-auto d-block rounded object-fit-contai" alt="Image" />
+                                    )
+                                } 
                                 <div className="card-body">
-
                                     <div className="row">                                       
                                         <div className="col-9">
                                         <p className="card-text text-truncate fw-bold" style={{fontSize:'14px'}}> { getRealFileName(file.filename) } </p>
@@ -114,8 +110,7 @@ export default function ProjectDetails() {
                                                 </ul>
                                             </div>
                                         </div>
-                                    </div>
-                                
+                                    </div>                                
                                 </div>
                             </div>
                             </div>
@@ -124,20 +119,7 @@ export default function ProjectDetails() {
                 )
             )}
         </div>
-
-        <ToastContainer
-            position="bottom-left"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-            transition: Bounce
-        />
-    </>
+        <CustomToastContainer />
+    </React.Fragment>
   )
 }
