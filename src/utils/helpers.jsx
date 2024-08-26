@@ -72,10 +72,10 @@ export function getRealFileName(filepath){
 export function handleDownloadFile(fileInfo) {
     const filename = fileInfo.filename;
   
-    axios.post( BACKEND_SERVER + '/files/download-file.php' , { fileInfo } , { responseType: 'blob' })
+    axios.post( `${BACKEND_SERVER}/files/download-file.php` , { fileInfo } , { responseType: 'blob' })
       .then((response) => {
 
-              // Create a temporary URL for the file
+            // Create a temporary URL for the file
             const url = window.URL.createObjectURL(new Blob([response.data]));
 
             // Create a link and trigger the download
@@ -92,7 +92,7 @@ export function handleDownloadFile(fileInfo) {
 }
 
 export function handleDownloadFolder(folderDetails) {
-  axios.post(BACKEND_SERVER + "/projects/download-project.php", folderDetails, {responseType : 'blob'})
+  axios.post(`${BACKEND_SERVER}/projects/download-project.php`, folderDetails, {responseType : 'blob'})
       .then(response => {
            // Create a blob URL for the zip file
           const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
