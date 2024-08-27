@@ -51,7 +51,7 @@ export default function Projects() {
     useEffect(()=>{
         const fetchClients = async () =>{
             try {
-                const response = await axios.get(BACKEND_SERVER + "/clients/getClientsList.php", {
+                const response = await axios.get(`${BACKEND_SERVER}/clients/getClientsList.php`, {
                     headers : {
                         'Authorization' : `Bearer ${jwt}`,
                         'Content-Type' : "Application/json"
@@ -81,7 +81,7 @@ export default function Projects() {
             event.target.querySelector("span.spinner-border").classList.toggle("d-none") //Activate the spinner
     
             try {
-                const response = await axios.post(BACKEND_SERVER + '/projects/delete-project.php', { PROJECT_ID: deleteId })
+                const response = await axios.post(`${BACKEND_SERVER}/projects/delete-project.php`, { PROJECT_ID: deleteId })
     
                 toast(response.data.msg)
                 spinner.classList.toggle("d-none")
