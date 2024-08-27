@@ -5,7 +5,7 @@ const userSlice = createSlice({
     initialState : {
         loading: false,
         userDetails : {},
-        isAunthenticated : false,
+        isAunthenticated : false, 
     },
     reducers : {
         loginSuccess : ( state, action ) => { //When the user has successfully logged in

@@ -71,7 +71,7 @@ export default function Login() {
         if (isAunthenticated && Object.keys(userDetails).length > 0) {
             navigate("/projects")
         }
-    }, [userDetails])
+    }, [userDetails, isAunthenticated, navigate])
     
   return ( 
     <div className="container-fluid">

@@ -87,7 +87,7 @@ export default function Projects() {
                 spinner.classList.toggle("d-none")
     
                 // if it was a success
-                if (response.data?.status && response.data.status == 1) {
+                if (response.data?.status == 1) {
                     // Hide the project just to prevent reloading the component 
                     const folderContainer = event.target.closest('div.folderContainer')
     
@@ -209,7 +209,7 @@ export default function Projects() {
             { isLoading ? (
                 <Loading />
             ) : (
-                <div className="row">
+                <div className="row g-2">
                     {!folders || folders.length === 0 ? (
                         <p>No folders found.</p>
                     ) : (
@@ -218,7 +218,9 @@ export default function Projects() {
                                 <div className="col-md-4 col-xs-6 border border-secondary p-2 folderContainer" key={ index }>
                                     <div className="row text-white">
                                         <div className="col-md-2 text-center"> <i className="bi bi-folder-fill"></i> </div>
-                                        <div className="col-md-7 text-truncate fw-bold" style={{ color: "rgba(254,255,252,1)" }}> {folder.project_name} </div>
+                                        <div className="col-md-7 text-truncate fw-bold" style={{ color: "rgba(254,255,252,1)" }}>
+                                             {folder.project_name} 
+                                        </div>
                                         <div className="col-md-3 text-center">
                                             <div className="dropdown">
                                                 <button className="btn btn-sm btn-default text-white btn-outline-none fw-bold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
