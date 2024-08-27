@@ -19,6 +19,7 @@ import ClientHomepagePage from './pages/ClientHomepagePage'
 import NewBookingsPage from './pages/NewBookingsPage'
 import ProfilePage from './pages/ProfilePage'
 import BookingsPage from './pages/BookingsPage'
+import MessageCenterPage from "./pages/MessageCenterPage"
 
 function App() {
 
@@ -30,7 +31,7 @@ function App() {
             <Route path='/signup' element={ <SignUpPage /> }></Route>
             <Route path='/resetpassword' element={ <ResetPasswordPage/> }></Route>       
 
-            <Route element={<LoginProtectedRoute />}>
+            {/* <Route element={<LoginProtectedRoute />}> */}
               <Route path='/home' element={  <HomePage/>  }></Route>
               <Route path="/newClient" element={  <AddClients /> }></Route>
               <Route path="/clients" element={  <ClientsList /> }></Route>
@@ -41,7 +42,8 @@ function App() {
               <Route path="/newbooking" element={ <NewBookingsPage /> }></Route> 
               <Route path="/updateprofile" element={ <ProfilePage /> }></Route>      
               <Route path="/bookings" element={ <BookingsPage /> }></Route>   
-            </Route>
+              <Route path="/messagecenter" element={ <MessageCenterPage /> }></Route>
+            {/* </Route> */}
 
             <Route element={<ClientAccessRoute />}>
               <Route path="/clienthomepage" element={ <ClientHomepagePage /> }></Route>

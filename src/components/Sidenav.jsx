@@ -155,7 +155,7 @@ export default function Sidenav() {
   }, [])
 
   return (
-    <div className='container-fluid overflow-y-auto sidenav' style={{backgroundColor: 'rgba(0,0,0,.5)', minHeight: '84vh'}}>
+    <div className='container-fluid overflow-y-auto sidenav' style={{backgroundColor: 'rgba(0,0,0,.5)', minHeight: '88vh'}}>
         <div className="dropdown text-white m-2 d-grid gap-2"> 
           <button className="btn btn-secondary dropdown-toggle" type="button" title="Upload new file(s) or folder." data-bs-toggle="dropdown" aria-expanded="false">
           <i className="bi bi-folder-plus"></i> &nbsp; New Project
@@ -180,8 +180,9 @@ export default function Sidenav() {
               <li> <Link to="/clients" className='text-decoration-none text-white'> <i className="bi bi-person-lines-fill"></i> Clients List </Link> </li>
             </ul>
         </li>
-        <li className={`mainmenu ${isDropdownActive(3) ? 'active' : ''}`} onClick={ ()=>toggleDropdown(3) }><i className="bi bi-tools"></i> &nbsp; Resource Management <i className="bi bi-caret-down-fill float-end"></i>
-            <ul className={`mainmenu-dropdown ${isDropdownActive(3) ? '' : 'd-none'}`} >
+        <li className={`mainmenu ${isDropdownActive(3) ? 'active' : ''}`} onClick={ ()=>toggleDropdown(3) }><i className="bi bi-chat-dots-fill"></i> &nbsp;  <Link to="/messagecenter" className="text-decoration-none text-white">Message Center</Link> </li>
+        <li className={`mainmenu ${isDropdownActive(4) ? 'active' : ''}`} onClick={ ()=>toggleDropdown(4) }><i className="bi bi-tools"></i> &nbsp; Resource Management <i className="bi bi-caret-down-fill float-end"></i>
+            <ul className={`mainmenu-dropdown ${isDropdownActive(4) ? '' : 'd-none'}`} >
               <li> <i className="bi bi-camera-fill"></i> Add new Items</li>
               <li><i className="bi bi-tools"></i> Items</li>
             </ul>
@@ -195,8 +196,7 @@ export default function Sidenav() {
               <h1 className="modal-title fs-5" id="staticBackdropLabel">Selected files(s)</h1>
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div className="modal-body"> 
-            
+            <div className="modal-body">             
             <h6 className="mb-2 text-light">Add a folder to upload files to.</h6>
             <div className="input-group mt-2 mb-4">            
                 <input type="text" name="foldername" id="foldername" onChange={ handleUploadFolderInput } value={ uploadFolder } className="form-control me-2 bg-dark text-white text-uppercase border border-secondary" />
