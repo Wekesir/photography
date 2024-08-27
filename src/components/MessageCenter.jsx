@@ -6,7 +6,7 @@ import Cookies from 'js-cookie'
 import { CustomToastContainer, toast } from '../utils/toastUtil'
 import axios from 'axios'
 
-export default function MessageCenter() {
+export default function MessageCenter( unreadMsgsCount ) {
     const [messages, setMessages] = useState({})
     const [isLoading, setIsLoading] = useState(true)
 
@@ -69,6 +69,10 @@ export default function MessageCenter() {
             if(response.data?.status === 1){
                 setMessages(response.data.messages)
                 setIsLoading(false)
+                // loop through all the messaes and return the total unread messages
+                const unreadMsgsCount = messages.reduce((count, msg) => {
+                    return msg.status === "unread" ? count + 1 : count;
+                  }, 0);                  
             } else {
                 toast(response.data.msg)
             }

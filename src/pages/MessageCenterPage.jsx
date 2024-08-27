@@ -1,9 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidenav from '../components/Sidenav'
 import MessageCenter from '../components/MessageCenter'
 import Navbar from '../components/Navbar'
 
 export default function MessageCenterPage() {
+    const [unreadMessages, setUnreadMessages] = useState(0)
+
+    const passUnreadMsgCount = (value) => {
+        setUnreadMessages(value)
+    }
+
     useEffect(()=>{
         document.title = "Message Center | Lyrics Studios"
     })
@@ -16,8 +22,11 @@ export default function MessageCenterPage() {
                     <Sidenav />
                 </div>
                 <div className="col-md-9">
-                    <h5 className="text-white py-2"><i className="bi bi-chat-dots-fill"></i>  Message Center</h5>
-                    <MessageCenter />
+                    <h5 className="text-white py-2">
+                        <i className="bi bi-chat-dots-fill"></i>  Message Center
+                        <span className="badge text-bg-info">{ (unreadMessages > 0) && unreadMessages }</span>
+                    </h5>
+                    <MessageCenter unreadMsgsCount= { passUnreadMsgCount } />
                 </div>
             </div>
         </div>
