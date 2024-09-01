@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import bg_video from "../assets/photography_bg.mp4";
 import "../assets/css/homepage.css";
 import { CustomToastContainer, toast } from "../utils/toastUtil";
-import { BACKEND_SERVER } from "../constants/constants";
+import { BACKEND_SERVER, BIZ_NAME } from "../constants/constants";
 import MainNavbar from "../components/MainNavbar";
 import Gallery from "../components/Gallery";
 import axios from "axios";
+import 'animate.css'
 
 export default function index() {
   const [messageFormInput, setMessageFormInput] = useState({});
@@ -99,7 +100,7 @@ export default function index() {
   };
 
   useEffect(() => {
-    document.title = "Lyrics Studios";
+    document.title = BIZ_NAME;
   }, []);
 
   return (
@@ -114,11 +115,11 @@ export default function index() {
             <source src={bg_video} type="video/mp4" />
           </video>
           <div id="textOverlayDiv" className="text-center">
-            <p>
+            <p className='animate__animated animate__zoomIn'>
               Welcome to <br />
               Lyrics Studios
             </p>
-            <button className="btn btn-primary text-center py-3 px-5 gradient-background fw-bold">
+            <button className="btn btn-primary text-center py-3 px-5 gradient-background fw-bold animate__animated animate__backInUp">
               Get Started
             </button>
           </div>
@@ -131,7 +132,7 @@ export default function index() {
             </h1>
             <div className="row">
               <div className="col-12 col-md-3">
-                <div className="card w-100 bg-dark text-white mb-3 mb-md-0">
+                <div className="card w-100 bg-dark text-white mb-3 mb-md-0 animate__animated animate__backInLeft">
                   <img
                     src="https://cdn.pixabay.com/photo/2020/03/09/06/18/camera-4914690_640.jpg"
                     className="card-img-top"
@@ -152,7 +153,7 @@ export default function index() {
                 </div>
               </div>
               <div className="col-12 col-md-3">
-                <div className="card w-100 bg-dark text-white mb-3 mb-md-0">
+                <div className="card w-100 bg-dark text-white mb-3 mb-md-0 animate__animated animate__backInBottom">
                   <img
                     src="https://cdn.pixabay.com/photo/2022/05/30/08/04/camera-7230748_640.jpg"
                     className="card-img-top"
@@ -174,7 +175,7 @@ export default function index() {
                 </div>
               </div>
               <div className="col-12 col-md-3">
-                <div className="card w-100 bg-dark text-white mb-3 mb-md-0">
+                <div className="card w-100 bg-dark text-white mb-3 mb-md-0 animate__animated animate__backInTop">
                   <img
                     src="https://cdn.pixabay.com/photo/2016/03/06/22/35/retouch-1241322_640.jpg"
                     className="card-img-top"
@@ -195,7 +196,7 @@ export default function index() {
                 </div>
               </div>
               <div className="col-12 col-md-3">
-                <div className="card w-100 bg-dark text-white mb-3 mb-md-0">
+                <div className="card w-100 bg-dark text-white mb-3 mb-md-0 animate__animated animate__backInRight">
                   <img
                     src="https://cdn.pixabay.com/photo/2022/12/24/21/14/portrait-7676482_640.jpg"
                     className="card-img-top"
@@ -220,7 +221,7 @@ export default function index() {
 
         <section id="contact" className="bg-light">
           <div className="container-fluid content-wrapper">
-            <h1 className="text-center py-4 text-white">
+            <h1 className="text-center py-4 text-white animate__animated animate__shakeX">
               <span className="gradient-text">Contact</span> Us
             </h1>
             <div className="row">
@@ -235,7 +236,7 @@ export default function index() {
                   <ul className="list-group gy-3">
                     <Link
                       to="#"
-                      className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center"
+                      className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center animate__animated animate__jello"
                       style={{
                         backgroundColor: "rgba(0,0,0,0)",
                         fontSize: "clamp(0.9rem, 2.5vw, 1.2rem)",
@@ -249,7 +250,7 @@ export default function index() {
                     </Link>
                     <Link
                       to="#"
-                      className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center"
+                      className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center  animate__animated animate__jello"
                       style={{
                         backgroundColor: "rgba(0,0,0,0)",
                         fontSize: "clamp(1rem, 3vw, 1.5rem)",
@@ -263,7 +264,7 @@ export default function index() {
                     </Link>
                     <Link
                       to="#"
-                      className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center"
+                      className="list-group-item list-group-item-action text-white border-0 d-flex align-items-center animate__animated animate__jello"
                       style={{
                         backgroundColor: "rgba(0,0,0,0)",
                         fontSize: "clamp(1rem, 3vw, 1.5rem)",
@@ -281,7 +282,7 @@ export default function index() {
               <div className="col-12 col-md-6 mb-2">
                 <form
                   action=""
-                  className="py-3 px-5"
+                  className="py-3 px-5 animate__animated animate__heartBeat"
                   onSubmit={handleSubmitMessage}
                   method="post"
                   style={{ backgroundColor: "rgba(255,255,255,.1)" }}
@@ -468,7 +469,7 @@ export default function index() {
                   <h6 className="text-white">
                     {year} Lyrics Studios. All rights reserved.
                   </h6>
-                  <small className="text-white">
+                  <small className="text-white animate__animated animate__flash">
                     Software by: Wekesir Ken(+254)710505755
                   </small>
                 </div>
