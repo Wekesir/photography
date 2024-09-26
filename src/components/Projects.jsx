@@ -227,11 +227,11 @@ export default function Projects() {
                                                 <i className="bi bi-three-dots-vertical fw-bold"></i>
                                                 </button>
                                                 <ul className="dropdown-menu dropdown-menu-dark">
-                                                    <li onClick={ (event)=>{ handleOpen(event, folder) } }><Link className="dropdown-item" to="#"><i className="bi bi-folder2-open"></i>   Open</Link></li>
-                                                    <li onClick={ ()=>{handleDownloadFolder(folder)} }><Link className="dropdown-item" to="#"><i className="bi bi-download"></i>   Download</Link></li>
-                                                    <li onClick={ (event)=>{handleEdit(event, folder)}}><Link className="dropdown-item" to="#"><i className="bi bi-pencil"></i>   Rename</Link></li>
-                                                    <li onClick={ ()=>{handleShareProject(folder)} }><Link className="dropdown-item" to="#"><i className="bi bi-share"></i>   Share</Link></li>
-                                                    <li onClick= { (event)=>{handleDelete(event, folder.project_id)}}><Link className="dropdown-item" to="#"><i className="bi bi-trash"></i>   Move to bin   <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"> </span> </Link></li>
+                                                    <li onClick={ (event)=>{ handleOpen(event, folder) } } title="Open folder to view files."><Link className="dropdown-item" to="#"><i className="bi bi-folder2-open"></i>   Open</Link></li>
+                                                    <li onClick={ ()=>{handleDownloadFolder(folder)} } title="Download folder."><Link className="dropdown-item" to="#"><i className="bi bi-download"></i>   Download</Link></li>
+                                                    <li onClick={ (event)=>{handleEdit(event, folder)}} title="Change folder name."><Link className="dropdown-item" to="#"><i className="bi bi-pencil"></i>   Rename</Link></li>
+                                                    <li onClick={ ()=>{handleShareProject(folder)} } title="Share folder with client(s)."><Link className="dropdown-item" to="#"><i className="bi bi-share"></i>   Share</Link></li>
+                                                    <li onClick= { (event)=>{handleDelete(event, folder.project_id)}} title="Delete folder."><Link className="dropdown-item" to="#"><i className="bi bi-trash"></i>   Move to bin   <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"> </span> </Link></li>
                                                 </ul>
                                             </div>
                                         </div>

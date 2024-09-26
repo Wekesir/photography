@@ -91,7 +91,7 @@ export default function ProjectDetails() {
                                        Your browser does not support the video tag.
                                      </video>
                                     ) : (
-                                      <img src={ `${BACKEND_SERVER}/assets/img/${file.filename}` } style={{height:'180px'}} className="card-img-top mx-auto d-block rounded object-fit-contai" alt="Image" />
+                                      <img src={ `${BACKEND_SERVER}/assets/img/${file.filename}` } style={{height:'180px'}} className="card-img-top mx-auto d-block rounded object-fit-contain" alt="Image" />
                                     )
                                 } 
                                 <div className="card-body">
@@ -105,8 +105,8 @@ export default function ProjectDetails() {
                                                     <i className="bi bi-three-dots-vertical"></i>
                                                 </button>
                                                 <ul className="dropdown-menu dropdown-menu-dark">
-                                                    <li onClick={ (event)=>{handleDownloadFile(event, file)} }><Link className="dropdown-item" to="#"><i className="bi bi-download"></i> &nbsp; Download &nbsp; <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> </Link></li>
-                                                    <li onClick={ (event)=>{handleDelete(event, file)} }><Link className="dropdown-item" to="#"><i className="bi bi-trash3"></i> &nbsp; Delete &nbsp;  <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>  </Link></li>
+                                                    <li onClick={ (event)=>{handleDownloadFile(event, file)} } title="Click to download file"><Link className="dropdown-item" to="#"><i className="bi bi-cloud-arrow-down"></i> &nbsp; Download &nbsp; <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> </Link></li>
+                                                    <li onClick={ (event)=>{handleDelete(event, file)} } title="Click to delete file."><Link className="dropdown-item" to="#"><i className="bi bi-trash3"></i> &nbsp; Delete &nbsp;  <span className="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>  </Link></li>
                                                 </ul>
                                             </div>
                                         </div>

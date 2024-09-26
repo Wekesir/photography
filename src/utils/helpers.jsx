@@ -1,7 +1,7 @@
 import axios from "axios"
 import { BACKEND_SERVER } from '../constants/constants'
 
-export function handleZoom(e){
+export function handleZoom(e){ 
   /**
    * When implementing this function, make sure to also import
    * const [scale, setScale] = useState(1);
