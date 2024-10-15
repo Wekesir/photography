@@ -127,8 +127,8 @@ export default function Sidenav() {
 
         const response = await axios.get(`${BACKEND_SERVER}/projects/fetch-projects.php`, {
           headers : {
-            Authorization : `Bearer ${jwtToken}`,
-            'Content-Type' : 'application/json'
+            'Authorization' : `Bearer ${jwtToken}`,
+            'Content-Type' : 'application/json',
           }
         }); 
     
