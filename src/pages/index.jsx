@@ -475,7 +475,7 @@ export default function index() {
                     {year} Lyrics Studios. All rights reserved.
                   </h6>
                   <small className="text-white wow flash">
-                    Software by: Wekesir Ken(+254)710505755
+                    Software by: Wekesir Ken(+254)710595755
                   </small>
                 </div>
               </div>
